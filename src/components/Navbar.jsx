@@ -1,33 +1,53 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { FiMenu, FiX, FiSearch } from "react-icons/fi";
-import { RiWhatsappFill, RiFacebookFill, RiInstagramFill } from "react-icons/ri";
+import {
+  RiWhatsappFill,
+  RiFacebookFill,
+  RiInstagramFill,
+} from "react-icons/ri";
 import logo from "../assets/logo.svg";
 import PrimaryButton from "./PrimaryButton";
 
 const navLinks = [
-  { name: "Home",      href: "/" },
-  { name: "Services",  href: "/services" },
-  { name: "Products",  href: "/products" },
-  { name: "About",     href: "/about" },
-  { name: "Contact",   href: "/contact" },
+  { name: "Home", href: "/" },
+  { name: "Services", href: "/services" },
+  { name: "Products", href: "/products" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const { hash } = useLocation(); // hash looks like "#/services"
 
-  const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+  /** Helper to build correct hash URL (/#/services) */
+  const linkTo = (path) => `#${path}`;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm ring-[1px] ring-slate-900/5">
-      {/* Small top bar */}
-      <div className=" bg-dark text-light">
+      {/* Top info bar */}
+      <div className="bg-dark text-light">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1 text-xs">
-          <span>+971 55 123 4567</span>
+          <a href="tel:+971551234567" className="hover:text-accent">
+            +971&nbsp;55&nbsp;123&nbsp;4567
+          </a>
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-accent"><RiFacebookFill /></a>
-            <a href="#" className="hover:text-accent"><RiInstagramFill /></a>
-            <a href="https://wa.me/+92332249000" className="hover:text-accent"><RiWhatsappFill /></a>
+            <a href="#" className="hover:text-accent">
+              <RiFacebookFill />
+            </a>
+            <a href="#" className="hover:text-accent">
+              <RiInstagramFill />
+            </a>
+            <a
+              href="https://wa.me/971XXXXXXXXX"
+              className="hover:text-accent"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <RiWhatsappFill />
+            </a>
           </div>
         </div>
       </div>
@@ -35,21 +55,24 @@ export default function Navbar() {
       {/* Main bar */}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2">
-          <img src={logo} alt="Ocean Stella" className="h-9 w-auto" />
-        </a>
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logo} alt="Ocean Stella" className="h-9 w-auto" />
+        </Link>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.name}
-              href={link.href}
-              className={`text-sm font-medium transition 
-                          ${pathname === link.href ? "text-primary" : "text-dark hover:text-primary"}`}
+              to={link.href}
+              className={`text-sm font-medium transition ${
+                hash === `#${link.href}`
+                  ? "text-primary"
+                  : "text-dark hover:text-primary"
+              }`}
             >
               {link.name}
-            </a>
+            </Link>
           ))}
 
           {/* Search */}
@@ -60,8 +83,8 @@ export default function Navbar() {
               placeholder="Search…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-9 w-32 rounded-full border bg-light pl-9 pr-3 text-sm
-                         transition-all focus:w-52 focus:border-primary focus:outline-none"
+              className="h-9 w-32 rounded-full border bg-light pl-9 pr-3 text-sm transition-all
+                         focus:w-52 focus:border-primary focus:outline-none"
             />
           </div>
 
@@ -84,21 +107,22 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile slide‑down */}
+      {/* Mobile drawer */}
       <div
-        className={`md:hidden overflow-hidden transition-[max-height] duration-300
-                    ${open ? "max-h-96" : "max-h-0"}`}
+        className={`overflow-hidden transition-[max-height] duration-300 md:hidden ${
+          open ? "max-h-96" : "max-h-0"
+        }`}
       >
         <nav className="space-y-2 bg-white px-4 pb-4 pt-2 shadow-inner">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.name}
-              href={link.href}
+              to={link.href}
               className="block rounded-lg px-3 py-2 text-dark hover:bg-light hover:text-primary"
               onClick={() => setOpen(false)}
             >
               {link.name}
-            </a>
+            </Link>
           ))}
 
           {/* Search on mobile */}

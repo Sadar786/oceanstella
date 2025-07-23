@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/mainLayout";
 import Home from "./pages/Home";
 // import other pages…
@@ -10,7 +10,7 @@ import Contact from "./pages/Contact";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <MainLayout>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -20,6 +20,6 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </MainLayout>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

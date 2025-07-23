@@ -30,8 +30,8 @@ export default function Navbar() {
       {/* Top info bar */}
       <div className="bg-dark text-light">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1 text-xs">
-          <a href="tel:+971551234567" className="hover:text-accent">
-            +971&nbsp;55&nbsp;123&nbsp;4567
+          <a href="tel:+923322649000" className="hover:text-accent">
+            +92&nbsp;33&nbsp;226&nbsp;49000
           </a>
           <div className="flex items-center gap-4">
             <a href="#" className="hover:text-accent">
@@ -41,7 +41,7 @@ export default function Navbar() {
               <RiInstagramFill />
             </a>
             <a
-              href="https://wa.me/971XXXXXXXXX"
+              href="https://wa.me/+923322649000"
               className="hover:text-accent"
               target="_blank"
               rel="noreferrer"

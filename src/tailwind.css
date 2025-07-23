@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ↓ Any extra custom CSS can go here if you really need it */
+
+
+.section-wrapper {
+  @apply mx-auto max-w-6xl px-4 py-16;
+}

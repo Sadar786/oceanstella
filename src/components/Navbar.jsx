@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiMenu, FiX, FiSearch } from "react-icons/fi";
+import { FiMenu, FiX, FiSearch, FiSun, FiMoon } from "react-icons/fi";
 import {
   RiWhatsappFill,
   RiFacebookFill,
@@ -91,7 +91,7 @@ export default function Navbar() {
           {/* CTA */}
           <PrimaryButton
             as="a"
-            href="https://wa.me/971XXXXXXXXX"
+            href="https://wa.me/+92233649000"
             className="bg-accent text-dark hover:bg-primary hover:text-light"
           >
             WhatsApp

@@ -5,9 +5,9 @@ import ContactStrip from "../components/ContactStripe";
 import sport2   from "../assets/boat3.jpg";
 import cruise1  from "../assets/boat2.jpg";
 import cruise2  from "../assets/boat1.jpg";
-import sport1   from "../assets/boat2.jpg";
-import fishing1 from "../assets/boat1.jpg";
-import fishing2 from "../assets/boat3.jpg";
+import sport1   from "../assets/boat4.jpg";
+import fishing1 from "../assets/boat5.jpg";
+import fishing2 from "../assets/boat6.jpg";
 
 const models = [
   { img: sport1,   name: "Stella 32 Sport",   cat: "Sport",   length: "32 ft", beam: "9.8 ft" },

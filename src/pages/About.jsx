@@ -1,6 +1,8 @@
 // src/pages/About.jsx
 import heroImg from "../assets/hero.jpg"; // any high‑res boatyard photo
+import Kalim from "../assets/kalim.jpg"; // team member photo
 import ContactStrip from "../components/ContactStripe";
+
 
 export default function About() {
 
@@ -99,7 +101,7 @@ export default function About() {
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {[
-            ["Ahmed Al‑Sayed", "CEO & Naval Architect"  ,"https://media.istockphoto.com/id/1413766112/photo/successful-mature-businessman-looking-at-camera-with-confidence.jpg?s=1024x1024&w=is&k=20&c=EpiScwoa1bAZedgWyyydy7CnyATRJVkBGE5KHD721u8="],
+            ["Ahmed Al‑Sayed", "CEO & Naval Architect"  ,{Kalim}],
             ["Fatima Rahman", "Head of Design","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAH1a05KHNyGOHMHtilHsQbd5-gHdfe7p1KA&s" ],
             ["Hasan Khan", "Production Manager", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ_B8dBacOt9MbLrJdc884Y_ji6FXU0EeLBA&s"],
           ].map(([name, role, pic]) => (

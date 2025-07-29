@@ -1,6 +1,6 @@
 // src/pages/About.jsx
 import heroImg from "../assets/hero.jpg"; // any high‑res boatyard photo
-import Kalim from "../assets/kalim.jpg"; // team member photo
+import Kalim from "../assets/Kalim.jpg"; // team member photo
 import ContactStrip from "../components/ContactStripe";
 
 

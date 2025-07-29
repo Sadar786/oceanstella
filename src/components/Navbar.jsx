@@ -35,7 +35,7 @@ export default function Navbar() {
   const isDark = mode === "dark";
 
   return (
-    <header className="sticky  top-0 z-50 w-full backdrop-blur-md bg-white/70 dark:bg-[#0f172a]/80 shadow-md transition-all duration-300">
+    <header className="sticky  top-0 z-50 w-full backdrop-blur-md  shadow-md transition-all duration-300">
       {/* Top info bar */}
       <div className="bg-dark  text-light text-xs py-1 px-4">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
@@ -58,7 +58,7 @@ export default function Navbar() {
       </div>
 
       {/* Main navbar */}
-      <div className="mx-auto max-w-7xl px-4 py-3 backdrop-blur-md bg-white/60 flex items-center justify-between md:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-3 backdrop-blur-md bg-white/60  dark:bg-dark flex items-center justify-between md:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <img src={logo} alt="Ocean Stella" className="h-10 w-auto" />

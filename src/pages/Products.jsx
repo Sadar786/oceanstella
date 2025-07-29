@@ -43,7 +43,7 @@ export default function Products() {
 
       {/* Intro */}
       <section className="section-wrapper max-w-3xl text-center">
-        <p className="mx-auto max-w-xl text-slate-600">
+        <p className="mx-auto max-w-xl text-slate-600 dark:text-white">
           Explore a selection of our most‑requested designs. Full spec sheets
           coming in Phase 2.
         </p>
@@ -51,12 +51,12 @@ export default function Products() {
 
       {/* Category tabs */}
       <section className="section-wrapper">
-        <div className="mb-8 flex flex-wrap justify-center gap-3">
+        <div className="mb-8 flex flex-wrap justify-center dark:text-white dark:bg-dark gap-3">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActive(cat)}
-              className={`rounded-full px-5 py-2 text-sm font-semibold
+              className={`rounded-full px-5 py-2 text-sm font-semibold dark:text-white dark:bg-dark 
                           ${active === cat
                             ? "bg-primary text-light"
                             : "bg-light ring-1 ring-dark/10 hover:bg-primary/10"}`}

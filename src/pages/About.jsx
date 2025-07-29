@@ -9,7 +9,7 @@ export default function About() {
   return (
     <>
       {/* Hero banner */}
-      <section className="relative h-[45vh] md:h-[55vh]">
+      <section className="relative h-[45vh] md:h-[55vh] ">
         <img
           src={heroImg}
           alt="Shipyard"
@@ -24,8 +24,8 @@ export default function About() {
       </section>
 
       {/* Story */}
-      <section className="section-wrapper max-w-3xl space-y-8">
-        <h2 className="text-3xl font-bold text-dark">Our Story</h2>
+      <section className="section-wrapper max-w-3xl space-y-8 dark:bg-dark mt-5">
+        <h2 className="text-3xl font-bold text-dark dark:text-white ">Our Story</h2>
 
         <p>
           Founded in <strong>2009</strong> on the shores of Dubai Creek, Ocean Stella
@@ -35,7 +35,7 @@ export default function About() {
           GCC and beyond.
         </p>
 
-        <div className="border-l-4 border-accent/70 pl-6">
+        <div className="border-l-4 border-accent/70 pl-6 ">
           <p className="font-semibold">Our mission</p>
           <p>
             To craft exceptional boats that create lifelong memories, combining
@@ -45,12 +45,12 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="section-wrapper justify-center items-center max-w-5xl">
-        <h2 className="mb-8 text-center text-3xl font-bold text-dark">
+      {/* Timeline */} 
+      <section className="section-wrapper justify-center items-center max-w-5xl dark:bg-dark mt-6">
+        <h2 className="mb-8 text-center text-3xl font-bold dark:text-white text-dark">
           Milestones
         </h2>
-        <ul className="relative before:absolute before:left-1/2 before:top-0 before:h-full before:w-1 before:-translate-x-1/2 before:bg-accent/40">
+        <ul className="relative   before:absolute before:left-1/2 before:top-0 before:h-full before:w-1 before:-translate-x-1/2 before:bg-accent/40">
           {[
             { year: "2009", text: "Workshop founded, first wooden dhow restored." },
             { year: "2014", text: "Launched our first 32‑ft fiberglass cruiser." },
@@ -61,9 +61,9 @@ export default function About() {
               key={item.year}
               className="mb-10 flex w-full items-center justify-between md:mb-12"
             >
-              <div className={` w-5/12 ${idx % 2 ? "order-1" : ""} justify-center items-center `}>
-                <p className="mb-2 text-lg font-semibold text-primary">{item.year}</p>
-                <p className="text-sm text-slate-600">{item.text}</p>
+              <div className={` w-5/12 ${idx % 2 ? "order-1" : ""} justify-center items-center  `}>
+                <p className="mb-2 text-lg font-semibold text-primary dark:text-slate-300">{item.year}</p>
+                <p className="text-sm text-slate-600 dark:text-light">{item.text}</p>
               </div>
               <div className="relative z-10 flex h-4 w-4 items-center justify-center rounded-full bg-accent ring-4 ring-light" />
               <div className="w-5/12 md:block hidden" />
@@ -73,11 +73,11 @@ export default function About() {
       </section>
 
       {/* Values grid */}
-      <section className="section-wrapper content-center justify-center items-center">
-        <h2 className="mb-8 text-center text-3xl font-bold text-dark">
+      <section className="section-wrapper dark:bg-dark content-center justify-center items-center">
+        <h2 className="mb-8 dark:text-light text-center text-3xl font-bold text-dark">
           What Sets Us Apart
         </h2>
-        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-4  dark:text-light md:grid-cols-2 lg:grid-cols-3">
           {[
             ["🌊", "100 % Marine‑grade materials"],
             ["🔧", "25‑year combined team experience"],
@@ -86,30 +86,30 @@ export default function About() {
             ["🛰️", "State‑of‑the‑art electronics"],
             ["🛡️", "5‑year structural warranty"],
           ].map(([emoji, text]) => (
-            <li key={text} className="rounded-xl bg-white p-5 shadow-sm">
-              <p className="text-lg">{emoji}</p>
-              <p className="font-medium text-dark">{text}</p>
+            <li key={text} className="rounded-xl bg-white dark:bg-slate-800 p-5 shadow-sm">
+              <p className="text-lg dark:text-light">{emoji}</p>
+              <p className="font-medium dark:text-light text-dark">{text}</p>
             </li>
           ))}
         </ul>
       </section>
 
       {/* Mini‑team (optional) */}
-      <section className="section-wrapper max-w-5xl">
-        <h2 className="mb-8 text-center text-3xl font-bold text-dark">
+      <section className="section-wrapper max-w-5xl ">
+        <h2 className="mb-8 text-center text-3xl dark:text-light font-bold text-dark">
           Leadership
         </h2>
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2  md:grid-cols-3">
           {[
             ["kalim Ullah", "CEO & Naval Architect"  ,Kalim],
             ["Fatima Rahman", "Head of Design","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAH1a05KHNyGOHMHtilHsQbd5-gHdfe7p1KA&s" ],
             ["Hasan Khan", "Production Manager", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ_B8dBacOt9MbLrJdc884Y_ji6FXU0EeLBA&s"],
           ].map(([name, role, pic]) => (
-            <div key={name} className="rounded-xl bg-white p-5 shadow-sm text-center">
+            <div key={name} className="dark:bg-slate-800  rounded-xl bg-white p-5 shadow-sm text-center">
               <div className="mx-auto mb-3 h-24 w-32 rounded-full">
               <img className="rounded-full" src={pic} alt="" /> </div>
-              <p className="font-semibold text-dark">{name}</p>
-              <p className="text-sm text-slate-600">{role}</p>
+              <p className="font-semibold dark:text-light text-dark">{name}</p>
+              <p className="text-sm dark:text-light text-slate-600">{role}</p>
             </div>
           ))}
         </div>

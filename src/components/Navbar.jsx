@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FiMenu, FiX, FiSearch, FiSun, FiMoon } from "react-icons/fi";
-import {
-  RiWhatsappFill,
-  RiFacebookFill,
-  RiInstagramFill,
-} from "react-icons/ri";
+import { RiWhatsappFill, RiFacebookFill, RiInstagramFill } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../redux/theme/themeSlice";
+
 import logo from "../assets/logo.svg";
 import PrimaryButton from "./PrimaryButton";
 
@@ -20,13 +19,16 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const { hash } = useLocation(); // hash looks like "#/services"
+  const { hash } = useLocation();
+  const dispatch = useDispatch();
+  const mode = useSelector((state) => state.theme.mode);
 
-  /** Helper to build correct hash URL (/#/services) */
+  const isDark = mode === "dark";
+
   const linkTo = (path) => `#${path}`;
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-sm ring-[1px] ring-slate-900/5">
+    <header className="sticky top-0 z-50 w-full bg-white dark:bg-[#101827] shadow-sm ring-[1px] ring-slate-900/5">
       {/* Top info bar */}
       <div className="bg-dark text-light">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1 text-xs">
@@ -54,9 +56,8 @@ export default function Navbar() {
 
       {/* Main bar */}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Ocean Stella" className="h-9 w-auto" />
+          <img src={logo} alt="Ocean Stella" className="h-9 w-auto" />
         </Link>
 
         {/* Desktop nav */}
@@ -68,7 +69,7 @@ export default function Navbar() {
               className={`text-sm font-medium transition ${
                 hash === `#${link.href}`
                   ? "text-primary"
-                  : "text-dark hover:text-primary"
+                  : "text-dark dark:text-light hover:text-primary"
               }`}
             >
               {link.name}
@@ -83,15 +84,28 @@ export default function Navbar() {
               placeholder="Search…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-9 w-32 rounded-full border bg-light pl-9 pr-3 text-sm transition-all
-                         focus:w-52 focus:border-primary focus:outline-none"
+              className="h-9 w-32 rounded-full border bg-light dark:bg-dark pl-9 pr-3 text-sm text-dark dark:text-light
+                         transition-all focus:w-52 focus:border-primary focus:outline-none"
             />
           </div>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={() => dispatch(toggleTheme())}
+            className="rounded-full p-2 transition hover:text-primary"
+            title="Toggle theme"
+          >
+            {isDark ? (
+              <FiSun className="text-xl text-light" />
+            ) : (
+              <FiMoon className="text-xl text-dark" />
+            )}
+          </button>
 
           {/* CTA */}
           <PrimaryButton
             as="a"
-            href="https://wa.me/+92233649000"
+            href="https://wa.me/+923322649000"
             className="bg-accent text-dark hover:bg-primary hover:text-light"
           >
             WhatsApp
@@ -113,12 +127,12 @@ export default function Navbar() {
           open ? "max-h-96" : "max-h-0"
         }`}
       >
-        <nav className="space-y-2 bg-white px-4 pb-4 pt-2 shadow-inner">
+        <nav className="space-y-2 bg-white dark:bg-[#101827] px-4 pb-4 pt-2 shadow-inner">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.href}
-              className="block rounded-lg px-3 py-2 text-dark hover:bg-light hover:text-primary"
+              className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-[#1a2533] hover:text-primary"
               onClick={() => setOpen(false)}
             >
               {link.name}
@@ -133,14 +147,22 @@ export default function Navbar() {
               placeholder="Search…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-10 w-full rounded-full border bg-light pl-9 pr-3 text-sm
+              className="h-10 w-full rounded-full border bg-light dark:bg-dark text-dark dark:text-light pl-9 pr-3 text-sm
                          focus:border-primary focus:outline-none"
             />
           </div>
 
+          {/* Theme toggle (mobile) */}
+          <button
+            onClick={() => dispatch(toggleTheme())}
+            className="mt-2 flex w-full items-center mb-4 justify-center gap-2 rounded-lg border border-primary px-4 py-2 text-sm font-medium text-dark dark:text-light hover:bg-primary hover:text-light"
+          >
+            {isDark ? <FiSun /> : <FiMoon />} 
+          </button>
+
           <PrimaryButton
             as="a"
-            href="https://wa.me/971XXXXXXXXX"
+            href="https://wa.me/+923322649000"
             className="mt-2 w-full bg-accent text-dark hover:bg-primary hover:text-light"
           >
             WhatsApp

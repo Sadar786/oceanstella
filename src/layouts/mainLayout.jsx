@@ -1,12 +1,17 @@
+import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function MainLayout({ children }) {
+  const mode = useSelector((state) => state.theme.mode); // get current theme from Redux
+
   return (
-    <div className="flex min-h-screen flex-col bg-white text-slate-800">
-      <Navbar />
-      <main className="flex-1">{children}</main>
-      <Footer />
+    <div className={mode === "dark" ? "dark" : ""}>
+      <div className="flex min-h-screen flex-col bg-light dark:bg-[#0b1624] text-dark dark:text-white">
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </div>
     </div>
   );
 }

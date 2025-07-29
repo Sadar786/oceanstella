@@ -1,7 +1,7 @@
 export default function ContactStrip() {
   return (              
-    <section className="section-wrapper mb-6 flex mb-3 flex-col items-center gap-6 rounded-xl bg-primary/5 md:flex-row md:justify-between">
-      <h3 className="text-xl font-semibold text-dark">
+    <section className="section-wrapper mb-6 flex dark:bg-slate-800 flex-col items-center gap-6 rounded-xl bg-primary/5 md:flex-row md:justify-between">
+      <h3 className="text-xl font-semibold dark:text-light  text-dark">
         Ready to start your next boat project?
       </h3>
       <a

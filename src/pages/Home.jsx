@@ -31,7 +31,7 @@ export default function Home() {
         </div>
       </section>
       {/* Product gallery */}
-      <section className="section-wrapper">
+      <section className="section-wrapper  dark:text-light">
         <ProductsGallery />
       </section>
       <section className="setion-wrapper mb-6 sm:mb-10">

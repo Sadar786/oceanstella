@@ -1,8 +1,6 @@
 import { HashRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/mainLayout";
 import Home from "./pages/Home";
-// import other pages…
-
 import Services from "./pages/Services";
 import Products from "./pages/Products";
 import About from "./pages/About";
@@ -13,6 +11,7 @@ export default function App() {
     <HashRouter>
       <MainLayout>
         <Routes>
+          
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/products" element={<Products />} />
@@ -23,3 +22,4 @@ export default function App() {
     </HashRouter>
   );
 }
+

@@ -11,7 +11,7 @@ export default function Home() {
       <Hero />
       {/* Services */}   
       <section className="mx-auto max-w-6xl px-4 pt-16">
-        <h2 className="mb-8 text-center text-3xl font-bold text-dark">
+        <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light   ">
           Our Core Services
         </h2>
                         

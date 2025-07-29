@@ -101,7 +101,7 @@ export default function About() {
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {[
-            ["Ahmed Al‑Sayed", "CEO & Naval Architect"  ,{Kalim}],
+            ["kalim Ullah", "CEO & Naval Architect"  ,Kalim],
             ["Fatima Rahman", "Head of Design","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAH1a05KHNyGOHMHtilHsQbd5-gHdfe7p1KA&s" ],
             ["Hasan Khan", "Production Manager", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ_B8dBacOt9MbLrJdc884Y_ji6FXU0EeLBA&s"],
           ].map(([name, role, pic]) => (

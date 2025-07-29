@@ -3,7 +3,8 @@ import ContactStrip from "../components/ContactStripe";
 import buildImg from "../assets/boat1.jpg";
 import paintImg from "../assets/boat2.jpg";
 import customImg from "../assets/boat3.jpg";
-import boatVideo from '../assets/boat.mp4'; // background video
+import boatVideo from "../assets/boat.mp4";
+
 function ServiceDetail({ reverse, img, title, tagline, copy, bullets }) {
   return (
     <section
@@ -11,15 +12,13 @@ function ServiceDetail({ reverse, img, title, tagline, copy, bullets }) {
         reverse ? "md:flex-row-reverse" : ""
       }`}
     >
-        {/* Background video */}
-                    <video
-                      className="absolute inset-0 h-full w-full object-cover"
-                      src={boatVideo}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    />
+      {/* Image */}
+      <img
+        src={img}
+        alt={title}
+        className="rounded-xl shadow-md object-cover h-64 w-full md:h-72"
+      />
+
       {/* Text */}
       <div>
         <h2 className="mb-2 text-2xl font-bold dark:text-white  text-dark">{title}</h2>
@@ -43,12 +42,16 @@ export default function Services() {
   return (
     <>
       {/* Banner */}
-      <section className="relative h-[40vh] md:h-[50vh]">
-        <img
-          src={buildImg}
-          alt="Workshop"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+      <section className="relative h-[70vh] md:h-[70vh]">
+         {/* Background video */}
+              <video
+                className="absolute inset-0 h-full w-full object-cover"
+                src={boatVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
         <div className="absolute inset-0 bg-dark/60" />
         <div className="relative z-10 flex h-full items-center justify-center">
           <h1 className="text-4xl font-extrabold text-light md:text-5xl">

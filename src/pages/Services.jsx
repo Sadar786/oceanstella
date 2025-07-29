@@ -3,7 +3,7 @@ import ContactStrip from "../components/ContactStripe";
 import buildImg from "../assets/boat1.jpg";
 import paintImg from "../assets/boat2.jpg";
 import customImg from "../assets/boat3.jpg";
-
+import boatVideo from '../assets/boat.mp4'; // background video
 function ServiceDetail({ reverse, img, title, tagline, copy, bullets }) {
   return (
     <section
@@ -11,13 +11,15 @@ function ServiceDetail({ reverse, img, title, tagline, copy, bullets }) {
         reverse ? "md:flex-row-reverse" : ""
       }`}
     >
-      {/* Image */}
-      <img
-        src={img}
-        alt={title}
-        className="rounded-xl shadow-md object-cover h-64 w-full md:h-72"
-      />
-
+        {/* Background video */}
+                    <video
+                      className="absolute inset-0 h-full w-full object-cover"
+                      src={boatVideo}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
       {/* Text */}
       <div>
         <h2 className="mb-2 text-2xl font-bold dark:text-white  text-dark">{title}</h2>

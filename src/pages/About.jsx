@@ -2,7 +2,7 @@
 import heroImg from "../assets/hero.jpg"; // any high‑res boatyard photo
 import Kalim from "../assets/Kalim.jpg"; // team member photo
 import ContactStrip from "../components/ContactStripe";
-
+import boatVideo from '../assets/boat.mp4'; // background video
 
 export default function About() {
 
@@ -10,11 +10,15 @@ export default function About() {
     <>
       {/* Hero banner */}
       <section className="relative h-[45vh] md:h-[55vh] ">
-        <img
-          src={heroImg}
-          alt="Shipyard"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        {/* Background video */}
+              <video
+                className="absolute inset-0 h-full w-full object-cover"
+                src={boatVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
         <div className="absolute inset-0 bg-dark/60" />
         <div className="relative z-10 flex h-full items-center justify-center">
           <h1 className="text-4xl font-extrabold text-light md:text-5xl">

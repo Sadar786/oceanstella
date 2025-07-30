@@ -20,14 +20,22 @@ export default function Home() {
             Our Core Services
           </h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <ServiceCard icon="build" title="Boat Making">
+            <ServiceCard icon="build" title="Boat Making" slug="boat-making">
               Precision engineering and handcrafted detailing for vessels that
               last a lifetime.
             </ServiceCard>
-            <ServiceCard icon="paint" title="Boat Painting">
+            <ServiceCard
+              icon="paint"
+              title="Boat Painting"
+              slug="boat-painting"
+            >
               Premium marine‑grade finishes that protect and turn heads at sea.
             </ServiceCard>
-            <ServiceCard icon="custom" title="Customization">
+            <ServiceCard
+              icon="custom"
+              title="Customization"
+              slug="customization"
+            >
               From interior layouts to tech upgrades—tailored to your lifestyle.
             </ServiceCard>
           </div>

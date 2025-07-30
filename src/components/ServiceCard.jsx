@@ -1,5 +1,6 @@
 // src/components/ServiceCard.jsx
 import { FiTool, FiLayers, FiZap } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const icons = {
   build: FiTool,
@@ -12,35 +13,36 @@ export default function ServiceCard({
   title,
   subtitle = "Premium quality & warranty",
   children,
+  slug = "",               // NEW → e.g. "boat-making"
   cta = "Learn more",
-  href = "#",
 }) {
   const Icon = icons[icon];
+  const linkTo = slug ? `/service/${slug}` : "#";
 
   return (
     <div
-      className="group relative flex flex-col dark:bg-slate-800 dark:border-slate-600 rounded-2xl border border-slate-200 bg-white p-6
-                 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg
-                 hover:border-primary/60"
+      className="group relative flex flex-col rounded-2xl border border-slate-200 bg-white
+                 dark:bg-slate-800 dark:border-slate-600 p-6 shadow-sm transition duration-300
+                 hover:-translate-y-1 hover:shadow-lg hover:border-primary/60"
     >
-      {/* Icon in gradient circle */}
+      {/* Icon */}
       <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full
                       bg-gradient-to-tr from-primary to-secondary text-light shadow-md">
         <Icon className="text-2xl" />
       </div>
 
       {/* Title + subtitle */}
-      <h3 className="mb-1 text-xl font-semibold dark:text-white text-dark">{title}</h3>
-      <p className="mb-4 text-sm font-medium text-secondary dark:text-secondary/100">{subtitle}</p>
+      <h3 className="mb-1 text-xl font-semibold text-dark dark:text-white">{title}</h3>
+      <p className="mb-4 text-sm font-medium text-secondary dark:text-secondary/90">{subtitle}</p>
 
-      {/* Body copy */}
-      <p className="mb-6 text-sm leading-relaxed text-slate-600 flex-1 dark:text-slate-300">
+      {/* Body */}
+      <p className="mb-6 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         {children}
       </p>
 
-      {/* CTA link */}
-      <a
-        href={href}
+      {/* CTA */}
+      <Link
+        to={linkTo}
         className="inline-flex items-center gap-1 self-start rounded-lg bg-accent px-4 py-2
                    text-sm font-semibold text-dark transition-colors
                    hover:bg-primary hover:text-light dark:bg-primary dark:text-light
@@ -57,14 +59,11 @@ export default function ServiceCard({
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
-      </a>
+      </Link>
 
-      {/* Decorative hover ring */}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-2xl
-                   opacity-0 ring-4 ring-primary/20 transition
-                   group-hover:opacity-100"
-      />
+      {/* Hover ring */}
+      <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0
+                      ring-4 ring-primary/20 transition group-hover:opacity-100" />
     </div>
   );
 }

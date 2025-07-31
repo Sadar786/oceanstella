@@ -32,7 +32,7 @@ const navLinks = [
 const services = [
   { name: "Boat Making", slug: "boat-making" },
   { name: "Boat Painting", slug: "boat-painting" },
-  { name: "Customization", slug: "customization" },
+  { name: "Maintenance", slug: "maintenance" },
 ];
 
 export default function Navbar() {
@@ -108,12 +108,12 @@ export default function Navbar() {
             <button className="flex items-center text-sm font-medium text-dark dark:text-light hover:text-primary transition-colors">
               Services <FiChevronDown className="ml-1" />
             </button>
-            <div className="absolute left-0 top-full mt-2 hidden w-48 rounded bg-white dark:bg-dark shadow-lg group-hover:block">
+            <div className="absolute left-0 top-full pt-3 hidden w-48 rounded bg-blend-saturation  dark:bg-dark shadow-lg group-hover:block">
               {services.map((svc) => (
                 <Link
                   key={svc.slug}
                   to={`/service/${svc.slug}`}
-                  className="block px-4 py-2 text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors"
+                  className="block px-4 py-2  border border-slate-500  hover:text-blue-500 dark:hover:text-blue-300 text-light rounded-lg my-1 dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors"
                 >
                   {svc.name}
                 </Link>

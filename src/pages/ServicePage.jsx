@@ -69,25 +69,110 @@ export default function ServicePage() {
           </div>
         </section>
       </FadeInOnScroll>
+{/* TECHNICAL SPECIFICATIONS & OPTIONS */}
+{ s.specs && (
+  <FadeInOnScroll delay={0.15}>
+    <section className="section-wrapper max-w-5xl">
+      <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light">
+        Technical Specifications & Options
+      </h2>
 
-      {/* GALLERY */}
-      <FadeInOnScroll delay={0.2}>
-        <section className="section-wrapper">
-          <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light">
-            Recent Builds
-          </h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            {s.gallery.map((src) => (
-              <img
-                key={src}
-                src={src}
-                alt=""
-                className="h-56 w-full rounded-xl object-cover hover:scale-105 transition-transform"
-              />
-            ))}
+      {s.specs.map((group) => (
+        <div key={group.title} className="mb-12">
+          <h3 className="mb-4 text-2xl font-semibold text-dark dark:text-light">
+            {group.title}
+          </h3>
+
+          {group.rows && (
+            <div className="overflow-x-auto">
+              <table className="w-full bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden">
+                <thead>
+                  <tr className="bg-accent/40 text-dark dark:bg-primary dark:text-light">
+                    <th className="px-6 py-3 text-left uppercase text-sm font-medium">Option</th>
+                    <th className="px-6 py-3 text-left uppercase text-sm font-medium">Details</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                  {group.rows.map(([opt, det], idx) => (
+                    <tr
+                      key={opt}
+                      className={`transition-colors hover:bg-accent/10 dark:hover:bg-primary/20 ${
+                        idx % 2 === 0 ? "bg-gray-50 dark:bg-slate-900" : ""
+                      }`}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap font-medium">{opt}</td>
+                      <td className="px-6 py-4">{det}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {group.cards && (
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              {group.cards.map((c) => (
+                <div
+                  key={c.name}
+                  className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 text-center transition hover:shadow-lg"
+                >
+                  <h4 className="mb-2 text-lg font-semibold text-dark dark:text-light">
+                    {c.name}
+                  </h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    {c.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </section>
+  </FadeInOnScroll>
+)}
+
+    {/* CASE STUDIES / RECENT PROJECTS */}
+<FadeInOnScroll delay={0.2}>
+  <section className="section-wrapper">
+    <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light">
+      Case Studies
+    </h2>
+    <div className="grid gap-6 md:grid-cols-3">
+      {s.projects.map((p) => (
+        <div
+          key={p.title}
+          className="flex flex-col rounded-xl bg-white dark:bg-slate-800 shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+        >
+          <img
+            src={p.img}
+            alt={p.title}
+            className="h-48 w-full object-cover"
+          />
+          <div className="p-4 flex-1 flex flex-col">
+            <h3 className="text-xl font-semibold text-dark dark:text-light">
+              {p.title}
+            </h3>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 flex-1">
+              {p.description}
+            </p>
+            <ul className="mt-4 space-y-1 text-sm text-dark dark:text-light">
+              <li>
+                <strong>Service:</strong> {p.serviceType}
+              </li>
+              <li>
+                <strong>Date:</strong> {p.date}
+              </li>
+              <li>
+                <strong>Cost:</strong> {p.cost}
+              </li>
+            </ul>
           </div>
-        </section>
-      </FadeInOnScroll>
+        </div>
+      ))}
+    </div>
+  </section>
+</FadeInOnScroll>
 
       {/* ORDER / CTA */}
       <FadeInOnScroll delay={0.3}>

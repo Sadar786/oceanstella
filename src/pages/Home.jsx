@@ -50,10 +50,8 @@ export default function Home() {
       </FadeInOnScroll>
 
       {/* Contact */}
-      <FadeInOnScroll delay={0.3}>
-        <section className="section-wrapper mb-6 sm:mb-10">
+      <FadeInOnScroll delay={0.5}>
           <ContactStrip />
-        </section>
       </FadeInOnScroll>
     </>
   );

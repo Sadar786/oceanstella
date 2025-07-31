@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -6,6 +7,7 @@ import {
   FiSearch,
   FiSun,
   FiMoon,
+  FiChevronDown,
 } from "react-icons/fi";
 import {
   RiWhatsappFill,
@@ -15,21 +17,27 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 
-import logo from "../assets/logo.svg";
 import logo2 from "../assets/logo2.png";
-import PrimaryButton from "./PrimaryButton";
 import logo3 from "../assets/logo3.png";
+import PrimaryButton from "./PrimaryButton";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Services", href: "/services" },
+  // we’ll handle “Services” manually below
   { name: "Products", href: "/products" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
 
+const services = [
+  { name: "Boat Making", slug: "boat-making" },
+  { name: "Boat Painting", slug: "boat-painting" },
+  { name: "Customization", slug: "customization" },
+];
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [query, setQuery] = useState("");
   const { hash } = useLocation();
   const dispatch = useDispatch();
@@ -37,16 +45,20 @@ export default function Navbar() {
   const isDark = mode === "dark";
 
   return (
-    <header className="sticky  top-0 z-50 w-full backdrop-blur-md  shadow-md transition-all duration-300">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-md shadow-md transition-all duration-300">
       {/* Top info bar */}
-      <div className="bg-dark  text-light text-xs py-1 px-4">
+      <div className="bg-dark text-light text-xs py-1 px-4">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <a href="tel:+923322649000" className="hover:text-accent transition">
-            +92 33 226 49000
+            +92 33 226 49000
           </a>
-          <div className="flex items-center gap-3 ">
-            <a href="#" className="hover:text-accent transition"><RiFacebookFill /></a>
-            <a href="#" className="hover:text-accent transition"><RiInstagramFill /></a>
+          <div className="flex items-center gap-3">
+            <a href="#" className="hover:text-accent transition">
+              <RiFacebookFill />
+            </a>
+            <a href="#" className="hover:text-accent transition">
+              <RiInstagramFill />
+            </a>
             <a
               href="https://wa.me/+923322649000"
               target="_blank"
@@ -60,11 +72,19 @@ export default function Navbar() {
       </div>
 
       {/* Main navbar */}
-      <div className="mx-auto max-w-7xl px-4 py-3 backdrop-blur-sm bg-white/40  dark:bg-dark flex items-center justify-between md:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-3 backdrop-blur-sm bg-white/40 dark:bg-dark flex items-center justify-between md:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center dark:text-light gap-2">
-          <img  src={logo2} alt="Ocean Stella" className="block dark:hidden h-10 w-auto dark:text-light" />
-          <img  src={logo3} alt="Ocean Stella" className="dark:block hidden h-10 w-auto dark:text-light" />
+          <img
+            src={logo2}
+            alt="Ocean Stella"
+            className="block dark:hidden h-10 w-auto"
+          />
+          <img
+            src={logo3}
+            alt="Ocean Stella"
+            className="hidden dark:block h-10 w-auto"
+          />
         </Link>
 
         {/* Desktop nav */}
@@ -83,9 +103,27 @@ export default function Navbar() {
             </Link>
           ))}
 
+          {/* Services dropdown */}
+          <div className="relative group">
+            <button className="flex items-center text-sm font-medium text-dark dark:text-light hover:text-primary transition-colors">
+              Services <FiChevronDown className="ml-1" />
+            </button>
+            <div className="absolute left-0 top-full mt-2 hidden w-48 rounded bg-white dark:bg-dark shadow-lg group-hover:block">
+              {services.map((svc) => (
+                <Link
+                  key={svc.slug}
+                  to={`/service/${svc.slug}`}
+                  className="block px-4 py-2 text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors"
+                >
+                  {svc.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* Search */}
           <div className="relative">
-            <FiSearch className="absolute  left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Search…"
@@ -130,20 +168,71 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       <div
         className={`transition-max-height overflow-hidden duration-300 md:hidden ${
-          open ? "max-h-[500px]" : "max-h-0"
+          open ? "max-h-[600px]" : "max-h-0"
         }`}
       >
         <nav className="space-y-3 px-4 pt-3 pb-6 bg-white dark:bg-[#0f172a] shadow-inner rounded-b-2xl">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.href}
-              className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
-              onClick={() => setOpen(false)}
+          <Link
+            to="/"
+            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
+            onClick={() => setOpen(false)}
+          >
+            Home
+          </Link>
+
+          {/* Mobile Services submenu */}
+          <div>
+            <button
+              onClick={() => setServicesOpen(!servicesOpen)}
+              className="w-full flex items-center justify-between rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary transition"
             >
-              {link.name}
-            </Link>
-          ))}
+              <span>Services</span>
+              <FiChevronDown
+                className={`transition-transform ${
+                  servicesOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            {servicesOpen && (
+              <div className="mt-1 space-y-1 pl-4">
+                {services.map((svc) => (
+                  <Link
+                    key={svc.slug}
+                    to={`/service/${svc.slug}`}
+                    className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary transition"
+                    onClick={() => {
+                      setOpen(false);
+                      setServicesOpen(false);
+                    }}
+                  >
+                    {svc.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Link
+            to="/products"
+            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
+            onClick={() => setOpen(false)}
+          >
+            Products
+          </Link>
+          <Link
+            to="/about"
+            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
+            onClick={() => setOpen(false)}
+          >
+            About
+          </Link>
+          <Link
+            to="/contact"
+            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
+            onClick={() => setOpen(false)}
+          >
+            Contact
+          </Link>
 
           {/* Search */}
           <div className="relative">
@@ -157,7 +246,7 @@ export default function Navbar() {
             />
           </div>
 
-          {/* Theme toggle button */}
+          {/* Theme toggle */}
           <button
             onClick={() => dispatch(toggleTheme())}
             className="w-full flex items-center justify-center gap-2 rounded-lg border border-primary px-4 py-2 text-sm font-medium text-dark dark:text-light hover:bg-primary hover:text-light transition"

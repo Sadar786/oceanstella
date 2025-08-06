@@ -13,6 +13,7 @@ export default {
         accent:    "#FFC93C",
         light:     "#F5FAFF",
         dark:      "#0F1B2A",
+        BgOnDark: "#002B5B",
       },
       keyframes: {
         floatX: {

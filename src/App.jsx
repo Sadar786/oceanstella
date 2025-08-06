@@ -6,12 +6,12 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ServicePage from "./pages/ServicePage";
 
+
 export default function App() {
   return (
     <HashRouter>
       <MainLayout>
         <Routes>
-          
           <Route path="/" element={<Home />} />
            <Route path="/products" element={<Products />} />
           <Route path="/about" element={<About />} />

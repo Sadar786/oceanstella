@@ -19,6 +19,7 @@ import { toggleTheme } from "../redux/theme/themeSlice";
 
 import logo2 from "../assets/logo2.png";
 import logo3 from "../assets/logo3.png";
+
 import PrimaryButton from "./PrimaryButton";
 
 const navLinks = [
@@ -81,7 +82,7 @@ export default function Navbar() {
             className="block dark:hidden h-10 w-auto"
           />
           <img
-            src={logo3}
+           // src={logo3}
             alt="Ocean Stella"
             className="hidden dark:block h-10 w-auto"
           />

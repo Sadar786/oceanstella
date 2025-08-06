@@ -4,6 +4,9 @@ import ServiceCard from "../components/ServiceCard";
 import ProductsGallery from "../components/ProductsGallery";
 import ContactStrip from "../components/ContactStripe";
 import FadeInOnScroll from "../components/FadeInOnScroll";
+import WhyTrustUs from "../components/WhyTrustUs";
+import FeaturedCaseStudies from "../components/FeaturedCaseStudies";
+import InsightsTeaser from "../components/InsightsTeaser";
 
 export default function Home() {
   return (
@@ -31,15 +34,24 @@ export default function Home() {
             >
               Premium marine‑grade finishes that protect and turn heads at sea.
             </ServiceCard>
-            <ServiceCard
-              icon="custom"
-              title="Customization"
-              slug="customization"
-            >
+            <ServiceCard icon="custom" title="Maintenance" slug="maintenance">
               From interior layouts to tech upgrades—tailored to your lifestyle.
             </ServiceCard>
           </div>
         </section>
+      </FadeInOnScroll>
+
+      {/* Why Trust Us Section */}
+      <FadeInOnScroll delay={0.5}>
+        <WhyTrustUs />
+      </FadeInOnScroll>
+      {/* Featured Case Studies */}
+      <FadeInOnScroll delay={0.5}>
+        <FeaturedCaseStudies />
+      </FadeInOnScroll>
+      {/* Insights Teaser */}
+      <FadeInOnScroll delay={0.5}>
+        <InsightsTeaser />
       </FadeInOnScroll>
 
       {/* Product gallery */}
@@ -51,7 +63,7 @@ export default function Home() {
 
       {/* Contact */}
       <FadeInOnScroll delay={0.5}>
-          <ContactStrip />
+        <ContactStrip />
       </FadeInOnScroll>
     </>
   );

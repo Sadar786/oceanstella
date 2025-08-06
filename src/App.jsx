@@ -7,11 +7,13 @@ import Contact from "./pages/Contact";
 import ServicePage from "./pages/ServicePage";
 import BlogPage from "./pages/BlogPage";
 import PostPage from "./pages/PostPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 export default function App() {
   return (
     <HashRouter>
+       <ScrollToTop />
       <MainLayout>
         <Routes>
           <Route path="/" element={<Home />} />

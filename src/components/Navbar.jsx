@@ -28,6 +28,7 @@ const navLinks = [
   { name: "Products", href: "/products" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
+  { name: "Blogs", href: "/blog" },
 ];
 
 const services = [
@@ -226,6 +227,13 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
           >
             About
+          </Link>
+          <Link
+            to="/blog"
+            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
+            onClick={() => setOpen(false)}
+          >
+            Blogs
           </Link>
           <Link
             to="/contact"

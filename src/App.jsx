@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ServicePage from "./pages/ServicePage";
+import BlogPage from "./pages/BlogPage";
+import PostPage from "./pages/PostPage";
 
 
 export default function App() {
@@ -17,6 +19,8 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/service/:slug" element={<ServicePage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<PostPage />} />
         </Routes>
       </MainLayout>
     </HashRouter>

@@ -1,4 +1,4 @@
-// src/components/casecomponents/CaseStudyGrid.jsx
+// src/components/caseStudy/CaseStudyGrid.jsx
 import FadeInOnScroll from "../FadeInOnScroll";
 import CaseStudyCard from "./CaseStudyCard";
 
@@ -14,12 +14,10 @@ export default function CaseStudyGrid({ projects }) {
   }
 
   return (
-    <FadeInOnScroll delay={0.3}>
-      <div className="section-wrapper grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="section-wrapper grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
           <CaseStudyCard key={p.slug || p.title} project={p} />
         ))}
       </div>
-    </FadeInOnScroll>
   );
 }

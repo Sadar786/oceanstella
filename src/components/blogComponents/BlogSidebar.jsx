@@ -7,7 +7,8 @@ import { FiFacebook, FiInstagram, FiTwitter } from "react-icons/fi";
 
 export default function BlogSidebar() {
   return (
-    <aside className="hidden lg:block w-80 space-y-8">
+    <aside className="block w-full lg:w-80 space-y-8">
+
       {/* About */}
       <FadeInOnScroll>
         <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">

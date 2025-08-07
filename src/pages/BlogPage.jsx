@@ -23,14 +23,13 @@ export default function BlogPage() {
       <BlogSearchFilter />
       <section className="section-wrapper grid lg:grid-cols-[1fr,auto] gap-8">
         <div className="space-y-8">
- 
           <FeaturedPostCard post={latestPosts[0]} />
           <div className="grid gap-6 md:grid-cols-2">
             {pagedPosts.map((post) => (
               <BlogCard key={post.slug} post={post} />
             ))}
           </div>
-           <Pagination currentPage={currentPage} totalPages={totalPages} />
+          <Pagination currentPage={currentPage} totalPages={totalPages} />
           <NewsletterSignup />
         </div>
         <BlogSidebar />

@@ -4,10 +4,10 @@ import { Link, useLocation } from "react-router-dom";
 import {
   FiMenu,
   FiX,
-  FiSearch,
   FiSun,
   FiMoon,
   FiChevronDown,
+  FiUser,
 } from "react-icons/fi";
 import {
   RiWhatsappFill,
@@ -18,17 +18,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 
 import logo2 from "../assets/logo2.png";
-import logo3 from "../assets/logo3.png";
-
 import PrimaryButton from "./PrimaryButton";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  // we’ll handle “Services” manually below
   { name: "Products", href: "/products" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
-  { name: "Blogs", href: "/blog" },
 ];
 
 const services = [
@@ -40,15 +36,16 @@ const services = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [authOpen, setAuthOpen] = useState(false);
   const { hash } = useLocation();
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.theme.mode);
   const isDark = mode === "dark";
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md shadow-md transition-all duration-300">
-      {/* Top info bar */}
+    <header className="sticky top-0 z-50 w-full backdrop-blur-md shadow-md transition-all">
+      {/* Top info bar omitted for brevity */}
+
       <div className="bg-dark text-light text-xs py-1 px-4">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <a href="tel:+923322649000" className="hover:text-accent transition">
@@ -74,19 +71,10 @@ export default function Navbar() {
       </div>
 
       {/* Main navbar */}
-      <div className="mx-auto max-w-7xl px-4 py-3 backdrop-blur-sm bg-white/40 dark:bg-dark flex items-center justify-between md:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between md:px-8 bg-white/40 dark:bg-dark backdrop-blur-sm">
         {/* Logo */}
-        <Link to="/" className="flex items-center dark:text-light gap-2">
-          <img
-            src={logo2}
-            alt="Ocean Stella"
-            className="block dark:hidden h-10 w-auto"
-          />
-          <img
-           // src={logo3}
-            alt="Ocean Stella"
-            className="hidden dark:block h-10 w-auto"
-          />
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logo2} alt="Ocean Stella" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop nav */}
@@ -110,12 +98,12 @@ export default function Navbar() {
             <button className="flex items-center text-sm font-medium text-dark dark:text-light hover:text-primary transition-colors">
               Services <FiChevronDown className="ml-1" />
             </button>
-            <div className="absolute left-0 top-full pt-3 hidden w-48 rounded bg-blend-saturation  dark:bg-dark shadow-lg group-hover:block">
+            <div className="absolute left-0 top-full mt-2 hidden w-48 rounded bg-white dark:bg-dark shadow-lg group-hover:block">
               {services.map((svc) => (
                 <Link
                   key={svc.slug}
                   to={`/service/${svc.slug}`}
-                  className="block px-4 py-2  border border-slate-500  hover:text-blue-500 dark:hover:text-blue-300 text-light rounded-lg my-1 dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors"
+                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
                 >
                   {svc.name}
                 </Link>
@@ -123,22 +111,24 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Search */}
-          <div className="relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="h-9 w-32 rounded-full border border-slate-300 bg-light dark:bg-slate-800 dark:border-slate-600 pl-9 pr-3 text-sm text-dark dark:text-light transition-all focus:w-48 focus:border-primary focus:outline-none"
-            />
-          </div>
+          {/* Case Studies & Blog */}
+          <Link
+            to="/case-studies"
+            className="text-sm font-medium text-dark dark:text-light hover:text-primary"
+          >
+            Case Studies
+          </Link>
+          <Link
+            to="/blog"
+            className="text-sm font-medium text-dark dark:text-light hover:text-primary"
+          >
+            Blogs
+          </Link>
 
           {/* Theme toggle */}
           <button
             onClick={() => dispatch(toggleTheme())}
-            className="p-2 rounded-full transition hover:text-primary"
+            className="p-2 rounded-full hover:text-primary transition"
             title="Toggle theme"
           >
             {isDark ? (
@@ -148,7 +138,35 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* CTA */}
+          {/* Auth dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setAuthOpen(!authOpen)}
+              className="p-2 rounded-full hover:text-primary transition text-dark dark:text-light"
+            >
+              <FiUser className="text-xl" />
+            </button>
+            {authOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-dark rounded shadow-lg">
+                <Link
+                  to="/login"
+                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                  onClick={() => setAuthOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                  onClick={() => setAuthOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* WhatsApp CTA */}
           <PrimaryButton
             as="a"
             href="https://wa.me/+923322649000"
@@ -167,33 +185,32 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile drawer */}
       <div
-        className={`transition-max-height overflow-hidden duration-300 md:hidden ${
+        className={`overflow-hidden transition-max-height duration-300 md:hidden ${
           open ? "max-h-[600px]" : "max-h-0"
         }`}
       >
-        <nav className="space-y-3 px-4 pt-3 pb-6 bg-white dark:bg-[#0f172a] shadow-inner rounded-b-2xl">
-          <Link
-            to="/"
-            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            Home
-          </Link>
+        <nav className="space-y-0 px-4 pt-3 pb-6 bg-white dark:bg-dark shadow-inner rounded-b-2xl">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.href}
+              onClick={() => setOpen(false)}
+              className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary rounded-lg transition"
+            >
+              {link.name}
+            </Link>
+          ))}
 
           {/* Mobile Services submenu */}
           <div>
             <button
               onClick={() => setServicesOpen(!servicesOpen)}
-              className="w-full flex items-center justify-between rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary transition"
+              className="w-full flex justify-between items-center px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
             >
-              <span>Services</span>
-              <FiChevronDown
-                className={`transition-transform ${
-                  servicesOpen ? "rotate-180" : ""
-                }`}
-              />
+              Services{" "}
+              <FiChevronDown className={servicesOpen ? "rotate-180" : ""} />
             </button>
             {servicesOpen && (
               <div className="mt-1 space-y-1 pl-4">
@@ -201,11 +218,11 @@ export default function Navbar() {
                   <Link
                     key={svc.slug}
                     to={`/service/${svc.slug}`}
-                    className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary transition"
                     onClick={() => {
                       setOpen(false);
                       setServicesOpen(false);
                     }}
+                    className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
                   >
                     {svc.name}
                   </Link>
@@ -214,57 +231,79 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Case Studies & Blogs */}
           <Link
-            to="/products"
-            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
+            to="/case-studies"
             onClick={() => setOpen(false)}
+            className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
           >
-            Products
-          </Link>
-          <Link
-            to="/about"
-            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            About
+            Case Studies
           </Link>
           <Link
             to="/blog"
-            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
             onClick={() => setOpen(false)}
+            className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
           >
             Blogs
           </Link>
-          <Link
-            to="/contact"
-            className="block rounded-lg px-3 py-2 text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary"
-            onClick={() => setOpen(false)}
-          >
-            Contact
-          </Link>
 
-          {/* Search */}
-          <div className="relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="h-10 w-full rounded-full border bg-light dark:bg-dark text-dark dark:text-light pl-9 pr-3 text-sm focus:border-primary focus:outline-none"
-            />
-          </div>
+          {/* Auth links */}
+          <Link
+            to="/login"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
+          >
+            Login
+          </Link>
+          <Link
+            to="/signup"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
+          >
+            Sign Up
+          </Link>
 
           {/* Theme toggle */}
           <button
             onClick={() => dispatch(toggleTheme())}
-            className="w-full flex items-center justify-center gap-2 rounded-lg border border-primary px-4 py-2 text-sm font-medium text-dark dark:text-light hover:bg-primary hover:text-light transition"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-lg border border-primary text-dark dark:text-light hover:bg-primary hover:text-light transition"
           >
-            {isDark ? <FiSun /> : <FiMoon />}
+            {isDark ? <FiSun /> : <FiMoon />}{" "}
             {isDark ? "Light Mode" : "Dark Mode"}
           </button>
 
-          {/* CTA */}
+          {/* Auth dropdown */}
+          <div className="relative ">
+            <button
+              onClick={() => setAuthOpen(!authOpen)}
+              className="p-2 mb-4 rounded-full hover:text-primary transition text-dark dark:text-light"
+            >
+              <div className="flex items-center gap-2">
+
+              <FiUser className="text-xl" />
+              <p>User</p>
+              </div>
+            </button>
+            {authOpen && (
+              <div className="absolute bottom-12 left-4 mt-2 w-40 bg-white dark:bg-dark rounded shadow-lg">
+                <Link
+                  to="/login"
+                  className="block px-4 py-2 mb-4 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                  onClick={() => setAuthOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                  onClick={() => setAuthOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
+          {/* WhatsApp CTA */}
           <PrimaryButton
             as="a"
             href="https://wa.me/+923322649000"

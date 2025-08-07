@@ -8,6 +8,8 @@ import ServicePage from "./pages/ServicePage";
 import BlogPage from "./pages/BlogPage";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
+import ModelDetails from "./components/productComps/ModelDetails";
+import CaseStudies from "./pages/CaseStudies";
 
 
 export default function App() {
@@ -23,6 +25,9 @@ export default function App() {
           <Route path="/service/:slug" element={<ServicePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<PostPage />} />
+          <Route path="/models/:slug" element={<ModelDetails />} />
+          <Route path="/case-studies" element={<CaseStudies />} />
+
         </Routes>
       </MainLayout>
     </HashRouter>

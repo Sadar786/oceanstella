@@ -1,5 +1,5 @@
 // src/components/blogcomponents/RelatedPosts.jsx
-import { latestPosts } from "../../components/data/blog";
+import { latestPosts } from "../data/blog";
 import BlogCard from "../../components/blogComponents/BlogCard";
 import FadeInOnScroll from "../FadeInOnScroll";
 

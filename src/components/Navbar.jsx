@@ -247,21 +247,7 @@ export default function Navbar() {
             Blogs
           </Link>
 
-          {/* Auth links */}
-          <Link
-            to="/login"
-            onClick={() => setOpen(false)}
-            className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            onClick={() => setOpen(false)}
-            className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
-          >
-            Sign Up
-          </Link>
+         
 
           {/* Theme toggle */}
           <button

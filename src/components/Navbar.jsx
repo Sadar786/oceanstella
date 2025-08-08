@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 
 import logo2 from "../assets/logo2.png";
+import logo3 from "../assets/logo3.png";
 import PrimaryButton from "./PrimaryButton";
 
 const navLinks = [
@@ -73,8 +74,11 @@ export default function Navbar() {
       {/* Main navbar */}
       <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between md:px-8 bg-white/40 dark:bg-dark backdrop-blur-sm">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex block dark:hidden items-center gap-2">
           <img src={logo2} alt="Ocean Stella" className="h-10 w-auto" />
+        </Link>
+        <Link to="/" className="flex hidden dark:block items-center gap-2">
+          <img src={logo3} alt="Ocean Stella" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop nav */}

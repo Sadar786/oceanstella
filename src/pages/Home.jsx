@@ -42,15 +42,15 @@ export default function Home() {
       </FadeInOnScroll>
 
       {/* Why Trust Us Section */}
-      <FadeInOnScroll delay={0.5}>
+      <FadeInOnScroll delay={0.1}>
         <WhyTrustUs />
       </FadeInOnScroll>
       {/* Featured Case Studies */}
-      <FadeInOnScroll delay={0.5}>
+      <FadeInOnScroll delay={0.1}>
         <FeaturedCaseStudies />
       </FadeInOnScroll>
       {/* Insights Teaser */}
-      <FadeInOnScroll delay={0.5}>
+      <FadeInOnScroll delay={0.1}>
         <InsightsTeaser />
       </FadeInOnScroll>
 
@@ -62,7 +62,7 @@ export default function Home() {
       </FadeInOnScroll>
 
       {/* Contact */}
-      <FadeInOnScroll delay={0.5}>
+      <FadeInOnScroll delay={0.1}>
         <ContactStrip />
       </FadeInOnScroll>
     </>

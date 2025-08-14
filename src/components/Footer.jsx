@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg"; 
 
 export default function Footer() {
@@ -26,9 +27,25 @@ export default function Footer() {
         <div>
           <h4 className="mb-2 font-medium">Quick Links</h4>
           <ul className="space-y-1 text-sm">
-            <li><a href="/services" className="hover:text-accent">Services</a></li>
-            <li><a href="/products" className="hover:text-accent">Products</a></li>
-            <li><a href="/about"    className="hover:text-accent">About Us</a></li>
+            <Link to="/" className="hover:text-accent">
+              <li>Home</li> 
+            </Link>
+            <Link to="/products" className="hover:text-accent">
+              <li>Products</li> 
+            </Link>
+            <Link to="/about" className="hover:text-accent">
+              <li>About</li> 
+            </Link>
+            <Link to="/contact" className="hover:text-accent">
+              <li>Contact</li>
+            </Link>
+            <Link to="/case-studies" className="hover:text-accent">
+              <li>Case Studies</li>
+            </Link>
+            <Link to="/blog" className="hover:text-accent">
+              <li>Blog</li>
+            </Link>
+            
           </ul>
         </div>
 

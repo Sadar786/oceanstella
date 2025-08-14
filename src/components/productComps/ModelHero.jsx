@@ -1,17 +1,22 @@
 // src/components/productcomponents/ModelHero.jsx
 import FadeInOnScroll from "../FadeInOnScroll";
 import heroImg from "../../assets/boat4.jpg"; // adjust path/image as needed
+import boatVideo from "../../assets/boat.mp4"; // background video
 
 export default function ModelHero() {
   return (
     <FadeInOnScroll>
-      <section className="relative h-[40vh] md:h-[50vh]">
+      <section className="relative h-[60vh] md:h-[80vh]">
         {/* Background image */}
-        <img
-          src={heroImg}
-          alt="Boat Models"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <video
+               className="absolute inset-0  h-full w-full object-cover "
+               src={boatVideo}
+               poster={heroImg}
+               autoPlay
+               muted
+               loop
+               playsInline
+             />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-dark/60" />
         {/* Text */}

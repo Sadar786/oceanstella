@@ -1,8 +1,8 @@
 // src/components/ProductsGallery.jsx
 import { useSelector } from "react-redux";
-import boat1 from "../assets/boat1.jpg";
-import boat2 from "../assets/boat2.jpg";
-import boat3 from "../assets/boat3.jpg";
+import boat1 from "../assets/newboat1.jpg";
+import boat2 from "../assets/boatMaking3.jpg";
+import boat3 from "../assets/newBoat3.jpg";
 
 const boats = [
   { src: boat1, name: "Stella 32" },

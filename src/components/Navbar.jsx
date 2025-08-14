@@ -1,5 +1,5 @@
 // src/components/Navbar.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   FiMenu,
@@ -8,12 +8,17 @@ import {
   FiMoon,
   FiChevronDown,
   FiUser,
-} from "react-icons/fi";
+} from "react-icons/fi"; // Feather
+
 import {
   RiWhatsappFill,
   RiFacebookFill,
   RiInstagramFill,
-} from "react-icons/ri";
+  RiPaintBrushFill,
+  RiToolsFill,
+  RiShip2Fill,
+} from "react-icons/ri"; // Remix
+
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 
@@ -36,27 +41,46 @@ const services = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false); // mobile submenu
   const [authOpen, setAuthOpen] = useState(false);
-  const { hash } = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+
+  // with HashRouter, pathname is '/route' (the hash is handled internally)
+  const { pathname } = useLocation();
+  const isActive = (href) => pathname === href;
+
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.theme.mode);
   const isDark = mode === "dark";
 
-  return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md shadow-md transition-all">
-      {/* Top info bar omitted for brevity */}
+  // shrink on scroll
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
+  // close dropdowns when route changes
+  useEffect(() => {
+    setOpen(false);
+    setAuthOpen(false);
+    setServicesOpen(false);
+  }, [pathname]);
+
+  return (
+    <header className="sticky top-0 z-50 w-full">
+      {/* Top info bar */}
       <div className="bg-dark text-light text-xs py-1 px-4">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <a href="tel:+923322649000" className="hover:text-accent transition">
             +92 33 226 49000
           </a>
           <div className="flex items-center gap-3">
-            <a href="#" className="hover:text-accent transition">
+            <a href="#" className="hover:text-accent transition" aria-label="Facebook">
               <RiFacebookFill />
             </a>
-            <a href="#" className="hover:text-accent transition">
+            <a href="#" className="hover:text-accent transition" aria-label="Instagram">
               <RiInstagramFill />
             </a>
             <a
@@ -64,6 +88,7 @@ export default function Navbar() {
               target="_blank"
               rel="noreferrer"
               className="hover:text-accent transition"
+              aria-label="WhatsApp"
             >
               <RiWhatsappFill />
             </a>
@@ -72,13 +97,20 @@ export default function Navbar() {
       </div>
 
       {/* Main navbar */}
-      <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between md:px-8 bg-white/40 dark:bg-dark backdrop-blur-sm">
-        {/* Logo */}
-        <Link to="/" className="flex block dark:hidden items-center gap-2">
-          <img src={logo2} alt="Ocean Stella" className="h-10 w-auto" />
-        </Link>
-        <Link to="/" className="flex hidden dark:block items-center gap-2">
-          <img src={logo3} alt="Ocean Stella" className="h-10 w-auto" />
+      <div
+        className={[
+          "mx-auto max-w-7xl px-4 md:px-8",
+          "flex items-center justify-between",
+          "backdrop-blur-xl transition-all",
+          isDark ? "bg-[#0F1B2A]/70" : "bg-white/70",
+          scrolled ? "py-2 shadow-lg" : "py-3 shadow-md",
+          "border-b border-white/10 dark:border-white/5",
+        ].join(" ")}
+      >
+        {/* Logo (auto light/dark) */}
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logo2} alt="Ocean Stella" className="h-10 w-auto dark:hidden block" />
+          <img src={logo3} alt="Ocean Stella" className="h-10 w-auto hidden dark:block" />
         </Link>
 
         {/* Desktop nav */}
@@ -87,71 +119,173 @@ export default function Navbar() {
             <Link
               key={link.name}
               to={link.href}
-              className={`text-sm font-medium transition-colors ${
-                hash === `#${link.href}`
+              className={[
+                "relative group px-1 text-sm font-medium transition-colors",
+                isActive(link.href)
                   ? "text-primary"
-                  : "text-dark dark:text-light hover:text-primary"
-              }`}
+                  : "text-dark dark:text-light hover:text-primary",
+              ].join(" ")}
             >
               {link.name}
+              {/* underline animation */}
+              <span
+                className={[
+                  "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary",
+                  "transition-all duration-300",
+                  isActive(link.href) ? "w-full" : "group-hover:w-full",
+                ].join(" ")}
+              />
             </Link>
           ))}
 
-          {/* Services dropdown */}
-          <div className="relative group">
-            <button className="flex items-center text-sm font-medium text-dark dark:text-light hover:text-primary transition-colors">
-              Services <FiChevronDown className="ml-1" />
+          {/* Services mega-dropdown */}
+          <div className="relative group/dropdown">
+            <button
+              className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-dark
+               dark:text-light hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Services
+              <FiChevronDown className="transition-transform group-hover/dropdown:rotate-180" />
             </button>
-            <div className="absolute left-0 top-full mt-2 hidden w-48 rounded bg-white dark:bg-dark shadow-lg group-hover:block">
-              {services.map((svc) => (
+
+            {/* Panel */}
+            <div
+              className={[
+                "absolute left-1/2 z-50 mt-3 hidden w-[28rem] -translate-x-1/2 rounded-2xl p-3 shadow-2xl ring-1",
+                "backdrop-blur-xl",
+                isDark
+                  ? "bg-slate-900/90 ring-white/10"
+                  : "bg-white/90 ring-black/5",
+                "group-hover/dropdown:block group-focus-within/dropdown:block",
+              ].join(" ")}
+            >
+              {/* pointer */}
+              <div
+                className={[
+                  "absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 ring-1",
+                  isDark ? "bg-slate-900/90 ring-white/10" : "bg-white/90 ring-black/5",
+                ].join(" ")}
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Link
-                  key={svc.slug}
-                  to={`/service/${svc.slug}`}
-                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                  to="/service/boat-making"
+                  className="flex items-start gap-3 rounded-xl p-3 transition hover:bg-primary/10 dark:hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                 >
-                  {svc.name}
+                  <span className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-accent">
+                    <RiShip2Fill />
+                  </span>
+                  <span>
+                    <span className="block font-semibold leading-tight text-dark dark:text-light">
+                      Boat Making
+                    </span>
+                    <span className="block text-xs text-slate-600 dark:text-slate-300">
+                      Custom builds, hull design & sea trials
+                    </span>
+                  </span>
                 </Link>
-              ))}
+
+                <Link
+                  to="/service/boat-painting"
+                  className="flex items-start gap-3 rounded-xl p-3 transition hover:bg-primary/10 dark:hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                >
+                  <span className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-accent">
+                    <RiPaintBrushFill />
+                  </span>
+                  <span>
+                    <span className="block font-semibold leading-tight text-dark dark:text-light">
+                      Boat Painting
+                    </span>
+                    <span className="block text-xs text-slate-600 dark:text-slate-300">
+                      Awlgrip finishes, graphics & UV protection
+                    </span>
+                  </span>
+                </Link>
+
+                <Link
+                  to="/service/maintenance"
+                  className="flex items-start gap-3 rounded-xl p-3 transition hover:bg-primary/10 dark:hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                >
+                  <span className="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-accent">
+                    <RiToolsFill />
+                  </span>
+                  <span>
+                    <span className="block font-semibold leading-tight text-dark dark:text-light">
+                      Maintenance
+                    </span>
+                    <span className="block text-xs text-slate-600 dark:text-slate-300">
+                      Engines, electrics, fiberglass & seasonal care
+                    </span>
+                  </span>
+                </Link>
+              </div>
+
+              <div className="mt-2 border-t border-slate-200/60 dark:border-white/10 pt-2 text-right">
+                <Link to="/services" className="text-xs font-medium text-primary hover:underline">
+                  View all services →
+                </Link>
+              </div>
             </div>
           </div>
 
           {/* Case Studies & Blog */}
           <Link
             to="/case-studies"
-            className="text-sm font-medium text-dark dark:text-light hover:text-primary"
+            className={[
+              "relative group px-1 text-sm font-medium transition-colors",
+              isActive("/case-studies") ? "text-primary" : "text-dark dark:text-light hover:text-primary",
+            ].join(" ")}
           >
             Case Studies
+            <span
+              className={[
+                "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary transition-all duration-300",
+                isActive("/case-studies") ? "w-full" : "group-hover:w-full",
+              ].join(" ")}
+            />
           </Link>
+
           <Link
             to="/blog"
-            className="text-sm font-medium text-dark dark:text-light hover:text-primary"
+            className={[
+              "relative group px-1 text-sm font-medium transition-colors",
+              isActive("/blog") ? "text-primary" : "text-dark dark:text-light hover:text-primary",
+            ].join(" ")}
           >
             Blogs
+            <span
+              className={[
+                "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary transition-all duration-300",
+                isActive("/blog") ? "w-full" : "group-hover:w-full",
+              ].join(" ")}
+            />
           </Link>
 
           {/* Theme toggle */}
           <button
             onClick={() => dispatch(toggleTheme())}
-            className="p-2 rounded-full hover:text-primary transition"
+            className="p-2 rounded-full hover:text-primary transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
             title="Toggle theme"
+            aria-label="Toggle theme"
           >
-            {isDark ? (
-              <FiSun className="text-xl text-yellow-300" />
-            ) : (
-              <FiMoon className="text-xl text-slate-700" />
-            )}
+            {isDark ? <FiSun className="text-xl text-yellow-300" /> : <FiMoon className="text-xl text-slate-700" />}
           </button>
 
           {/* Auth dropdown */}
           <div className="relative">
             <button
-              onClick={() => setAuthOpen(!authOpen)}
-              className="p-2 rounded-full hover:text-primary transition text-dark dark:text-light"
+              onClick={() => setAuthOpen((v) => !v)}
+              className="p-2 rounded-full hover:text-primary transition text-dark dark:text-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              aria-haspopup="true"
+              aria-expanded={authOpen}
+              aria-label="User menu"
             >
               <FiUser className="text-xl" />
             </button>
             {authOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-dark rounded shadow-lg">
+              <div className="absolute right-0 mt-2 w-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-slate-900">
                 <Link
                   to="/login"
                   className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
@@ -170,7 +304,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* WhatsApp CTA */}
+          {/* CTA */}
           <PrimaryButton
             as="a"
             href="https://wa.me/+923322649000"
@@ -182,8 +316,9 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen((v) => !v)}
           className="text-2xl text-primary md:hidden"
+          aria-label="Toggle menu"
         >
           {open ? <FiX /> : <FiMenu />}
         </button>
@@ -191,17 +326,22 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className={`overflow-hidden transition-max-height duration-300 md:hidden ${
-          open ? "max-h-[600px]" : "max-h-0"
-        }`}
+        className={[
+          "md:hidden overflow-hidden transition-all duration-300",
+          open ? "max-h-[650px] opacity-100" : "max-h-0 opacity-0",
+        ].join(" ")}
       >
-        <nav className="space-y-0 px-4 pt-3 pb-6 bg-white dark:bg-dark shadow-inner rounded-b-2xl">
+        <nav className="space-y-1 px-4 pt-3 pb-6 bg-white dark:bg-dark shadow-inner rounded-b-2xl">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.href}
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 hover:text-primary rounded-lg transition"
+              className={[
+                "block px-3 py-2 text-sm rounded-lg transition",
+                "hover:bg-light dark:hover:bg-slate-800",
+                isActive(link.href) ? "text-primary" : "text-dark dark:text-light",
+              ].join(" ")}
             >
               {link.name}
             </Link>
@@ -210,14 +350,14 @@ export default function Navbar() {
           {/* Mobile Services submenu */}
           <div>
             <button
-              onClick={() => setServicesOpen(!servicesOpen)}
+              onClick={() => setServicesOpen((v) => !v)}
               className="w-full flex justify-between items-center px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
             >
-              Services{" "}
-              <FiChevronDown className={servicesOpen ? "rotate-180" : ""} />
+              Services
+              <FiChevronDown className={`transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
             </button>
             {servicesOpen && (
-              <div className="mt-1 space-y-1 pl-4">
+              <div className="mt-1 space-y-1 pl-3">
                 {services.map((svc) => (
                   <Link
                     key={svc.slug}
@@ -235,7 +375,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Case Studies & Blogs */}
           <Link
             to="/case-studies"
             onClick={() => setOpen(false)}
@@ -251,48 +390,33 @@ export default function Navbar() {
             Blogs
           </Link>
 
-         
-
           {/* Theme toggle */}
           <button
             onClick={() => dispatch(toggleTheme())}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-lg border border-primary text-dark dark:text-light hover:bg-primary hover:text-light transition"
           >
-            {isDark ? <FiSun /> : <FiMoon />}{" "}
+            {isDark ? <FiSun /> : <FiMoon />}
             {isDark ? "Light Mode" : "Dark Mode"}
           </button>
 
-          {/* Auth dropdown */}
-          <div className="relative ">
-            <button
-              onClick={() => setAuthOpen(!authOpen)}
-              className="p-2 mb-4 rounded-full hover:text-primary transition text-dark dark:text-light"
+          {/* Auth quick links */}
+          <div className="flex gap-2">
+            <Link
+              to="/login"
+              onClick={() => setOpen(false)}
+              className="flex-1 text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
             >
-              <div className="flex items-center gap-2">
-
-              <FiUser className="text-xl" />
-              <p>User</p>
-              </div>
-            </button>
-            {authOpen && (
-              <div className="absolute bottom-12 left-4 mt-2 w-40 bg-white dark:bg-dark rounded shadow-lg">
-                <Link
-                  to="/login"
-                  className="block px-4 py-2 mb-4 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-                  onClick={() => setAuthOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-                  onClick={() => setAuthOpen(false)}
-                >
-                  Sign Up
-                </Link>
-              </div>
-            )}
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              onClick={() => setOpen(false)}
+              className="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-accent text-dark hover:bg-primary hover:text-light transition"
+            >
+              Sign Up
+            </Link>
           </div>
+
           {/* WhatsApp CTA */}
           <PrimaryButton
             as="a"

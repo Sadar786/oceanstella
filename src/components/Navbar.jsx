@@ -223,8 +223,8 @@ export default function Navbar() {
               </div>
 
               <div className="mt-2 border-t border-slate-200/60 dark:border-white/10 pt-2 text-right">
-                <Link to="/services" className="text-xs font-medium text-primary hover:underline">
-                  View all services →
+                <Link to="/blog" className="text-xs font-medium text-primary hover:underline">
+                  View Insights →
                 </Link>
               </div>
             </div>

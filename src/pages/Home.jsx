@@ -23,7 +23,7 @@ export default function Home() {
             Our Core Services
           </h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <ServiceCard icon="build" title="Boat Making" slug="boat-making">
+            <ServiceCard icon="build" title="Boat Building" slug="boat-making">
               Precision engineering and handcrafted detailing for vessels that
               last a lifetime.
             </ServiceCard>

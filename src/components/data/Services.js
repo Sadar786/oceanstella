@@ -18,7 +18,7 @@ import maintenance4        from "../../assets/boatCus3.jpg";
 export const services = {
   /* ───────── BOAT MAKING ───────── */
   "boat-making": {
-    title: "Boat Making",
+    title: "Boat Building",
     heroImg: boatMakingHero,
     tagline: "Hand-built hulls — engineered for adventure",
     intro:

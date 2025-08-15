@@ -10,7 +10,7 @@ import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
 import ModelDetails from "./components/productComps/ModelDetails";
 import CaseStudies from "./pages/CaseStudies";
-
+ 
 
 export default function App() {
   return (
@@ -27,7 +27,7 @@ export default function App() {
           <Route path="/blog/:slug" element={<PostPage />} />
           <Route path="/models/:slug" element={<ModelDetails />} />
           <Route path="/case-studies" element={<CaseStudies />} />
-
+ 
         </Routes>
       </MainLayout>
     </HashRouter>

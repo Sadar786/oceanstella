@@ -6,6 +6,7 @@ export default function Footer() {
     <footer className="bg-dark text-light ring-1 ring-light/10">
 
       <div className="section-wrapper grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        
         {/* Column 1 */}
         <div>
           <h3 className="mb-2 text-lg font-semibold">Ocean Stella</h3>
@@ -45,7 +46,7 @@ export default function Footer() {
             <Link to="/blog" className="hover:text-accent">
               <li>Blog</li>
             </Link>
-            
+
           </ul>
         </div>
 
@@ -60,6 +61,8 @@ export default function Footer() {
           </a>
           <p className="text-sm opacity-80">info@oceanstella.ae</p>
         </div>
+
+
       </div>
     </footer>
   );

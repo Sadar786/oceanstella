@@ -25,7 +25,7 @@ export default function ServicePage() {
         <img src={s.heroImg} alt={s.title} className="absolute  inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-dark/60" />
         <div className="relative z-10 flex h-full items-center justify-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-light">{s.title}</h1>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-light">{s.title}</h1>
         </div>
       </section>
 
@@ -55,11 +55,12 @@ export default function ServicePage() {
           <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light">
             How We Work
           </h2>
-          <div className="grid gap-6 md:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-4 ">
             {s.process.map(([emoji, step, desc]) => (
               <div
                 key={step}
-                className="rounded-xl bg-white dark:bg-slate-800 p-6 text-center shadow-md"
+                className="rounded-xl bg-white dark:bg-slate-800 p-6 text-center shadow-md
+                hover:translate-y-1 transition duration-300 hover:border-primary/60 hover:border hover:shadow-lg"
               >
                 <p className="text-3xl mb-2">{emoji}</p>
                 <h3 className="font-semibold text-dark dark:text-white">{step}</h3>
@@ -142,7 +143,8 @@ export default function ServicePage() {
       {s.projects.map((p) => (
         <div
           key={p.title}
-          className="flex flex-col rounded-xl bg-white dark:bg-slate-800 shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          className="flex flex-col rounded-xl bg-white dark:bg-slate-800 shadow-md overflow-hidden hover:shadow-lg transition-shadow
+          hover:translate-y-1 hover:transition duration-300 hover:border-primary/60"
         >
           <img
             src={p.img}

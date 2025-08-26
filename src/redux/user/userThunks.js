@@ -24,6 +24,7 @@ export const doSignIn = (email, password) => async (dispatch) => {
     const r = await api("/api/v1/auth/signin", { method: "POST", body: { email, password } });
     dispatch(signInSuccess(r.user));
     return r.user;
+    console.log(r.user)
   } catch (e) {
     dispatch(signInFailure(e.message));
     throw e;

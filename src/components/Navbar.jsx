@@ -287,14 +287,14 @@ export default function Navbar() {
             {authOpen && (
               <div className="absolute right-0 mt-2 w-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-slate-900">
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
                   onClick={() => setAuthOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
-                  to="/signup"
+                  to="/auth/signup"
                   className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
                   onClick={() => setAuthOpen(false)}
                 >
@@ -402,14 +402,14 @@ export default function Navbar() {
           {/* Auth quick links */}
           <div className="flex gap-2">
             <Link
-              to="/login"
+              to="/auth/login"
               onClick={() => setOpen(false)}
               className="flex-1 text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
             >
               Login
             </Link>
             <Link
-              to="/signup"
+              to="/auth/signup"
               onClick={() => setOpen(false)}
               className="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-accent text-dark hover:bg-primary hover:text-light transition"
             >

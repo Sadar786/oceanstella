@@ -1,17 +1,19 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './tailwind.css'
-import App from './App.jsx'
-import { Provider } from 'react-redux'
-import store from './redux/store.jsx'
+// src/main.jsx
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>  {/* ← This was missing */}
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </StrictMode>
-)
+import AuthInit from "./components/AuthInit";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistore } from "./redux/store"; // your combined store file
+import App from "./App";
+ import "./tailwind.css";
 
-   
- 
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistore}>
+      <AuthInit>
+        <App />
+      </AuthInit>
+    </PersistGate>
+  </Provider>
+);

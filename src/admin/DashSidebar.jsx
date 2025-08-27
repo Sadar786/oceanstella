@@ -15,6 +15,12 @@ import {
   HiLogout,
   HiUser,
 } from "react-icons/hi";
+import {
+  signInStart, signInSuccess, signInFailure,
+  signOutStart, signOutSuccess,
+} from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
+import { doSignOut } from "../redux/user/userThunks";
 
 function cx(...cls) {
   return cls.filter(Boolean).join(" ");
@@ -55,6 +61,7 @@ const SECTIONS = [
 
 export default function DashSidebar({ activeTab }) {
   const nav = useNavigate();
+  const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(false);
 
   // remember collapse state between visits
@@ -68,15 +75,14 @@ export default function DashSidebar({ activeTab }) {
 
   const go = (tab) => `/admin?tab=${tab}`;
 
-  async function handleSignOut() {
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/signout`, {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch {}
-    nav("/auth/login");
-  }
+  async function handleLogout() {
+  try {
+    await dispatch(doSignOut());
+    nav("/", { replace: true });
+  } finally {
+   }
+}
+
 
   return (
     <aside
@@ -156,7 +162,7 @@ export default function DashSidebar({ activeTab }) {
 
         {/* Sign out */}
         <button
-          onClick={handleSignOut}
+          onClick={handleLogout}
           className={cx(
             "w-full group relative flex items-center gap-3 rounded-xl px-3 py-2",
             "text-slate-300 hover:bg-white/5 hover:border-white/10 border border-transparent"

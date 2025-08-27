@@ -8,6 +8,10 @@ import {
   FiMoon,
   FiChevronDown,
   FiUser,
+  FiGrid,
+  FiLogOut,
+  FiLogIn,
+  FiUserPlus,
 } from "react-icons/fi"; // Feather
 
 import {
@@ -25,6 +29,9 @@ import { toggleTheme } from "../redux/theme/themeSlice";
 import logo2 from "../assets/logo2.png";
 import logo3 from "../assets/logo3.png";
 import PrimaryButton from "./PrimaryButton";
+import { useNavigate } from "react-router-dom";
+import { doSignOut } from "../redux/user/userThunks";
+
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -53,6 +60,10 @@ export default function Navbar() {
   const mode = useSelector((state) => state.theme.mode);
   const isDark = mode === "dark";
 
+  const nav = useNavigate();
+  const currentUser = useSelector((s) => s.user.currentUser);
+  const [loggingOut, setLoggingOut] = useState(false);
+
   // shrink on scroll
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -68,6 +79,20 @@ export default function Navbar() {
     setServicesOpen(false);
   }, [pathname]);
 
+
+
+  async function handleLogout() {
+  try {
+    setLoggingOut(true);
+    await dispatch(doSignOut());
+    setAuthOpen(false);
+    nav("/", { replace: true });
+  } finally {
+    setLoggingOut(false);
+  }
+}
+
+
   return (
     <header className="sticky top-0 z-50 w-full">
       {/* Top info bar */}
@@ -77,10 +102,18 @@ export default function Navbar() {
             +92 33 226 49000
           </a>
           <div className="flex items-center gap-3">
-            <a href="#" className="hover:text-accent transition" aria-label="Facebook">
+            <a
+              href="#"
+              className="hover:text-accent transition"
+              aria-label="Facebook"
+            >
               <RiFacebookFill />
             </a>
-            <a href="#" className="hover:text-accent transition" aria-label="Instagram">
+            <a
+              href="#"
+              className="hover:text-accent transition"
+              aria-label="Instagram"
+            >
               <RiInstagramFill />
             </a>
             <a
@@ -109,8 +142,16 @@ export default function Navbar() {
       >
         {/* Logo (auto light/dark) */}
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo2} alt="Ocean Stella" className="h-10 w-auto dark:hidden block" />
-          <img src={logo3} alt="Ocean Stella" className="h-10 w-auto hidden dark:block" />
+          <img
+            src={logo2}
+            alt="Ocean Stella"
+            className="h-10 w-auto dark:hidden block"
+          />
+          <img
+            src={logo3}
+            alt="Ocean Stella"
+            className="h-10 w-auto hidden dark:block"
+          />
         </Link>
 
         {/* Desktop nav */}
@@ -165,7 +206,9 @@ export default function Navbar() {
               <div
                 className={[
                   "absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 ring-1",
-                  isDark ? "bg-slate-900/90 ring-white/10" : "bg-white/90 ring-black/5",
+                  isDark
+                    ? "bg-slate-900/90 ring-white/10"
+                    : "bg-white/90 ring-black/5",
                 ].join(" ")}
               />
 
@@ -223,7 +266,10 @@ export default function Navbar() {
               </div>
 
               <div className="mt-2 border-t border-slate-200/60 dark:border-white/10 pt-2 text-right">
-                <Link to="/blog" className="text-xs font-medium text-primary hover:underline">
+                <Link
+                  to="/blog"
+                  className="text-xs font-medium text-primary hover:underline"
+                >
                   View Insights →
                 </Link>
               </div>
@@ -235,7 +281,9 @@ export default function Navbar() {
             to="/case-studies"
             className={[
               "relative group px-1 text-sm font-medium transition-colors",
-              isActive("/case-studies") ? "text-primary" : "text-dark dark:text-light hover:text-primary",
+              isActive("/case-studies")
+                ? "text-primary"
+                : "text-dark dark:text-light hover:text-primary",
             ].join(" ")}
           >
             Case Studies
@@ -251,7 +299,9 @@ export default function Navbar() {
             to="/blog"
             className={[
               "relative group px-1 text-sm font-medium transition-colors",
-              isActive("/blog") ? "text-primary" : "text-dark dark:text-light hover:text-primary",
+              isActive("/blog")
+                ? "text-primary"
+                : "text-dark dark:text-light hover:text-primary",
             ].join(" ")}
           >
             Blogs
@@ -270,39 +320,97 @@ export default function Navbar() {
             title="Toggle theme"
             aria-label="Toggle theme"
           >
-            {isDark ? <FiSun className="text-xl text-yellow-300" /> : <FiMoon className="text-xl text-slate-700" />}
+            {isDark ? (
+              <FiSun className="text-xl text-yellow-300" />
+            ) : (
+              <FiMoon className="text-xl text-slate-700" />
+            )}
           </button>
 
-          {/* Auth dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setAuthOpen((v) => !v)}
-              className="p-2 rounded-full hover:text-primary transition text-dark dark:text-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-              aria-haspopup="true"
-              aria-expanded={authOpen}
-              aria-label="User menu"
-            >
-              <FiUser className="text-xl" />
-            </button>
-            {authOpen && (
-              <div className="absolute right-0 mt-2 w-44 rounded-xl overflow-hidden shadow-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-slate-900">
-                <Link
-                  to="/auth/login"
-                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-                  onClick={() => setAuthOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/auth/signup"
-                  className="block px-4 py-2 text-sm text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-                  onClick={() => setAuthOpen(false)}
-                >
-                  Sign Up
-                </Link>
-              </div>
-            )}
+        {/* Auth dropdown */}
+<div className="relative">
+  <button
+    onClick={() => setAuthOpen((v) => !v)}
+    className="p-1.5 rounded-full hover:ring-2 hover:ring-primary/40 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+    aria-haspopup="true"
+    aria-expanded={authOpen}
+    aria-label="User menu"
+  >
+    {currentUser ? (
+      currentUser.avatar ? (
+        // Show avatar if available
+        <img
+          src={currentUser.avatar}
+          alt={currentUser.name || "User"}
+          className="w-8 h-8 rounded-full object-cover"
+        />
+      ) : (
+        // Otherwise fallback initials
+        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20 text-primary font-semibold">
+          {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
+        </span>
+      )
+    ) : (
+      // Default icon if no user
+      <FiUser className="text-2xl text-dark dark:text-light" />
+    )}
+  </button>
+
+  {authOpen && (
+    <div className="absolute right-0 mt-3 w-52 rounded-2xl border border-gray-200/40 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-lg ring-1 ring-black/5 dark:ring-white/10 overflow-hidden animate-fadeIn">
+      {currentUser ? (
+        <>
+          <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
+            <p className="text-sm font-medium text-dark dark:text-light">
+              {currentUser.name || "User"}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              {currentUser.email}
+            </p>
           </div>
+
+          <Link
+            to="/admin?tab=dashboard"
+            className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+            onClick={() => setAuthOpen(false)}
+          >
+            <FiGrid className="text-base" />
+            Dashboard
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="flex items-center gap-2 w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+          >
+            <FiLogOut className="text-base" />
+            {loggingOut ? "Logging out…" : "Logout"}
+          </button>
+        </>
+      ) : (
+        <>
+          <Link
+            to="/auth/login"
+            className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+            onClick={() => setAuthOpen(false)}
+          >
+            <FiLogIn className="text-base" />
+            Login
+          </Link>
+
+          <Link
+            to="/auth/signup"
+            className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+            onClick={() => setAuthOpen(false)}
+          >
+            <FiUserPlus className="text-base" />
+            Sign Up
+          </Link>
+        </>
+      )}
+    </div>
+  )}
+</div>
 
           {/* CTA */}
           <PrimaryButton
@@ -340,7 +448,9 @@ export default function Navbar() {
               className={[
                 "block px-3 py-2 text-sm rounded-lg transition",
                 "hover:bg-light dark:hover:bg-slate-800",
-                isActive(link.href) ? "text-primary" : "text-dark dark:text-light",
+                isActive(link.href)
+                  ? "text-primary"
+                  : "text-dark dark:text-light",
               ].join(" ")}
             >
               {link.name}
@@ -354,7 +464,11 @@ export default function Navbar() {
               className="w-full flex justify-between items-center px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
             >
               Services
-              <FiChevronDown className={`transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
+              <FiChevronDown
+                className={`transition-transform ${
+                  servicesOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
             {servicesOpen && (
               <div className="mt-1 space-y-1 pl-3">
@@ -400,22 +514,47 @@ export default function Navbar() {
           </button>
 
           {/* Auth quick links */}
-          <div className="flex gap-2">
-            <Link
-              to="/auth/login"
-              onClick={() => setOpen(false)}
-              className="flex-1 text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-            >
-              Login
-            </Link>
-            <Link
-              to="/auth/signup"
-              onClick={() => setOpen(false)}
-              className="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-accent text-dark hover:bg-primary hover:text-light transition"
-            >
-              Sign Up
-            </Link>
-          </div>
+         {/* Auth quick links (mobile) */}
+{/* Auth quick links (mobile) */}
+{currentUser ? (
+  <div className="space-y-2">
+    <Link
+      to="/admin?tab=dashboard"
+      onClick={() => setOpen(false)}
+      className="block w-full text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+    >
+      Dashboard
+    </Link>
+
+    <button
+      onClick={async () => {
+        await handleLogout();
+        setOpen(false);
+      }}
+      className="w-full text-center px-3 py-2 text-sm rounded-lg border border-red-300 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+    >
+      {loggingOut ? "Logging out…" : "Logout"}
+    </button>
+  </div>
+) : (
+  <div className="flex gap-2">
+    <Link
+      to="/auth/login"
+      onClick={() => setOpen(false)}
+      className="flex-1 text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+    >
+      Login
+    </Link>
+    <Link
+      to="/auth/signup"
+      onClick={() => setOpen(false)}
+      className="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-accent text-dark hover:bg-primary hover:text-light transition"
+    >
+      Sign Up
+    </Link>
+  </div>
+)}
+
 
           {/* WhatsApp CTA */}
           <PrimaryButton

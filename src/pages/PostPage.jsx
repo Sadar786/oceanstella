@@ -1,7 +1,7 @@
 // src/pages/PostPage.jsx
 import { useParams } from "react-router-dom";
 import { latestPosts } from "../components/data/blog";                       // <-- correct path
-import Breadcrumbs     from "../components/blogComponents/Breadcrumbs";
+import Breadcrumbs from "../components/BlogComponents/Breadcrumbs"
 import PostHero        from "../components/blogComponents/PostHero";
 import TableOfContents from "../components/blogComponents/TableOfContents";
 import PostContent     from "../components/blogComponents/PostContent";

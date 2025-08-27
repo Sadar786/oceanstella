@@ -25,9 +25,14 @@ export default {
           "60%, 100%": { transform: "translateX(50)" },
           "50%": { transform: "translateX(50px)" },
         },
+        fadeIn: {
+      "0%": { opacity: 0, transform: "translateY(-5px)" },
+      "100%": { opacity: 1, transform: "translateY(0)" },
+    },
       },
       animation: {
         floatX: "floatX 6s ease-in-out infinite",
+         fadeIn: "fadeIn 0.2s ease-out",
       },
       fontFamily: {
         sans: ["Poppins", "ui-sans-serif", "system-ui"],

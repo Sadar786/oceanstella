@@ -2,6 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "./DashSidebar";
 import DashboardHome from "./DashboardHome";
+import Profile from "./sections/Profile";
+import ProductTab from "./sections/ProductsTab";
+import Categories from "./sections/Categories";
+import CaseStudies from "./sections/Blog";
+import Blog from "./sections/Blog";
+import Leads from "./sections/Leads";
+import Inquiries from "./sections/Inquiries";
+import Media from "./sections/Media";
+import Users from "./sections/Users";
+import Settings from "./sections/Setting";
+ 
+
+
+
 
 export default function Dashboard() {
   const location = useLocation();
@@ -20,12 +34,20 @@ export default function Dashboard() {
       </aside>
 
       {/* main */}
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
-        {tab === "dashboard" && <DashboardHome />}
-        {/* next tabs we’ll add later:
-          products, categories, case-studies, blog, leads, inquiries, users, settings
-        */}
-      </main>
+    <main className="flex-1 p-4 md:p-6 lg:p-8">
+  {tab === "dashboard" && <DashboardHome />}
+  {tab === "profile" && <Profile />}
+  {tab === "products" && <ProductTab />}
+  {tab === "categories" && <Categories />}
+  {tab === "case-studies" && <CaseStudies />}
+  {tab === "blog" && <Blog />}
+  {tab === "leads" && <Leads />}
+  {tab === "inquiries" && <Inquiries />}
+  {tab === "media" && <Media />}
+  {tab === "users" && <Users />}
+  {tab === "settings" && <Settings />}  
+  
+</main>
     </div>
   );
 }

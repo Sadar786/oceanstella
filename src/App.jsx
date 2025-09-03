@@ -14,7 +14,8 @@ import Dashboard from "./admin/Dashboard";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import RequireAuth from "./components/RequireAuth";
-
+import Profile from "./pages/Profile";
+ 
 export default function App() {
   return (
     <HashRouter>
@@ -31,11 +32,20 @@ export default function App() {
           <Route path="/models/:slug" element={<ModelDetails />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <Profile />
+              </RequireAuth>
+            }
+          />
+          <Route
             path="/admin"
-            element={ <RequireAuth>
-                 <Dashboard />
-                 </RequireAuth>
-             }
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
           />
           <Route path="/auth/login" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />

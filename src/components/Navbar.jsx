@@ -32,7 +32,6 @@ import PrimaryButton from "./PrimaryButton";
 import { useNavigate } from "react-router-dom";
 import { doSignOut } from "../redux/user/userThunks";
 
-
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Products", href: "/products" },
@@ -79,19 +78,16 @@ export default function Navbar() {
     setServicesOpen(false);
   }, [pathname]);
 
-
-
   async function handleLogout() {
-  try {
-    setLoggingOut(true);
-    await dispatch(doSignOut());
-    setAuthOpen(false);
-    nav("/", { replace: true });
-  } finally {
-    setLoggingOut(false);
+    try {
+      setLoggingOut(true);
+      await dispatch(doSignOut());
+      setAuthOpen(false);
+      nav("/", { replace: true });
+    } finally {
+      setLoggingOut(false);
+    }
   }
-}
-
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -327,90 +323,100 @@ export default function Navbar() {
             )}
           </button>
 
-        {/* Auth dropdown */}
-<div className="relative">
-  <button
-    onClick={() => setAuthOpen((v) => !v)}
-    className="p-1.5 rounded-full hover:ring-2 hover:ring-primary/40 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-    aria-haspopup="true"
-    aria-expanded={authOpen}
-    aria-label="User menu"
-  >
-    {currentUser ? (
-      currentUser.avatar ? (
-        // Show avatar if available
-        <img
-          src={currentUser.avatar}
-          alt={currentUser.name || "User"}
-          className="w-8 h-8 rounded-full object-cover"
-        />
-      ) : (
-        // Otherwise fallback initials
-        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20 text-primary font-semibold">
-          {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
-        </span>
-      )
-    ) : (
-      // Default icon if no user
-      <FiUser className="text-2xl text-dark dark:text-light" />
-    )}
-  </button>
+          {/* Auth dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setAuthOpen((v) => !v)}
+              className="p-1.5 rounded-full hover:ring-2 hover:ring-primary/40 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              aria-haspopup="true"
+              aria-expanded={authOpen}
+              aria-label="User menu"
+            >
+              {currentUser ? (
+                currentUser.avatar ? (
+                  // Show avatar if available
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name || "User"}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  // Otherwise fallback initials
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20 text-primary font-semibold">
+                    {currentUser.name
+                      ? currentUser.name.charAt(0).toUpperCase()
+                      : "U"}
+                  </span>
+                )
+              ) : (
+                // Default icon if no user
+                <FiUser className="text-2xl text-dark dark:text-light" />
+              )}
+            </button>
 
-  {authOpen && (
-    <div className="absolute right-0 mt-3 w-52 rounded-2xl border border-gray-200/40 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-lg ring-1 ring-black/5 dark:ring-white/10 overflow-hidden animate-fadeIn">
-      {currentUser ? (
-        <>
-          <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
-            <p className="text-sm font-medium text-dark dark:text-light">
-              {currentUser.name || "User"}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-              {currentUser.email}
-            </p>
+            {authOpen && (
+              <div className="absolute right-0 mt-3 w-52 rounded-2xl border border-gray-200/40 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-lg ring-1 ring-black/5 dark:ring-white/10 overflow-hidden animate-fadeIn">
+                {currentUser ? (
+                  <>
+                    <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
+                      <p className="text-sm font-medium text-dark dark:text-light">
+                        {currentUser.name || "User"}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {currentUser.email}
+                      </p>
+                    </div>
+
+                    <Link
+                      to="/admin?tab=dashboard"
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                      onClick={() => setAuthOpen(false)}
+                    >
+                      <FiGrid className="text-base" />
+                      Dashboard
+
+                    </Link>
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                    >
+                      <FiUser className="text-base" />
+                      Profile
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      disabled={loggingOut}
+                      className="flex items-center gap-2 w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                    >
+                      <FiLogOut className="text-base" />
+                      {loggingOut ? "Logging out…" : "Logout"}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/auth/login"
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                      onClick={() => setAuthOpen(false)}
+                    >
+                      <FiLogIn className="text-base" />
+                      Login
+                    </Link>
+
+                    <Link
+                      to="/auth/signup"
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+                      onClick={() => setAuthOpen(false)}
+                    >
+                      <FiUserPlus className="text-base" />
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
           </div>
-
-          <Link
-            to="/admin?tab=dashboard"
-            className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-            onClick={() => setAuthOpen(false)}
-          >
-            <FiGrid className="text-base" />
-            Dashboard
-          </Link>
-
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="flex items-center gap-2 w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-          >
-            <FiLogOut className="text-base" />
-            {loggingOut ? "Logging out…" : "Logout"}
-          </button>
-        </>
-      ) : (
-        <>
-          <Link
-            to="/auth/login"
-            className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-            onClick={() => setAuthOpen(false)}
-          >
-            <FiLogIn className="text-base" />
-            Login
-          </Link>
-
-          <Link
-            to="/auth/signup"
-            className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-dark dark:text-light hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-            onClick={() => setAuthOpen(false)}
-          >
-            <FiUserPlus className="text-base" />
-            Sign Up
-          </Link>
-        </>
-      )}
-    </div>
-  )}
-</div>
 
           {/* CTA */}
           <PrimaryButton
@@ -514,47 +520,53 @@ export default function Navbar() {
           </button>
 
           {/* Auth quick links */}
-         {/* Auth quick links (mobile) */}
-{/* Auth quick links (mobile) */}
-{currentUser ? (
-  <div className="space-y-2">
-    <Link
-      to="/admin?tab=dashboard"
-      onClick={() => setOpen(false)}
-      className="block w-full text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-    >
-      Dashboard
-    </Link>
+          {/* Auth quick links (mobile) */}
+          {/* Auth quick links (mobile) */}
+          {currentUser ? (
+            <div className="space-y-2">
+              <Link
+                to="/admin?tab=dashboard"
+                onClick={() => setOpen(false)}
+                className="block w-full text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+              >
+                Dashboard
+              </Link>
 
-    <button
-      onClick={async () => {
-        await handleLogout();
-        setOpen(false);
-      }}
-      className="w-full text-center px-3 py-2 text-sm rounded-lg border border-red-300 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-    >
-      {loggingOut ? "Logging out…" : "Logout"}
-    </button>
-  </div>
-) : (
-  <div className="flex gap-2">
-    <Link
-      to="/auth/login"
-      onClick={() => setOpen(false)}
-      className="flex-1 text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
-    >
-      Login
-    </Link>
-    <Link
-      to="/auth/signup"
-      onClick={() => setOpen(false)}
-      className="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-accent text-dark hover:bg-primary hover:text-light transition"
-    >
-      Sign Up
-    </Link>
-  </div>
-)}
-
+              <Link
+                to="/profile"
+                onClick={() => setOpen(false)}
+                className="block w-full text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+              >
+                Profile
+              </Link>
+              <button
+                onClick={async () => {
+                  await handleLogout();
+                  setOpen(false);
+                }}
+                className="w-full text-center px-3 py-2 text-sm rounded-lg border border-red-300 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+              >
+                {loggingOut ? "Logging out…" : "Logout"}
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Link
+                to="/auth/login"
+                onClick={() => setOpen(false)}
+                className="flex-1 text-center px-3 py-2 text-sm rounded-lg border hover:bg-primary/10 dark:hover:bg-primary/20 transition"
+              >
+                Login
+              </Link>
+              <Link
+                to="/auth/signup"
+                onClick={() => setOpen(false)}
+                className="flex-1 text-center px-3 py-2 text-sm rounded-lg bg-accent text-dark hover:bg-primary hover:text-light transition"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
 
           {/* WhatsApp CTA */}
           <PrimaryButton

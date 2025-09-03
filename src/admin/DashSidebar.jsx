@@ -14,11 +14,9 @@ import {
   HiCog,
   HiLogout,
   HiUser,
+  HiOutlineUserCircle,
 } from "react-icons/hi";
-import {
-  signInStart, signInSuccess, signInFailure,
-  signOutStart, signOutSuccess,
-} from "../redux/user/userSlice";
+
 import { useDispatch } from "react-redux";
 import { doSignOut } from "../redux/user/userThunks";
 
@@ -36,11 +34,12 @@ const SECTIONS = [
   {
     title: "Catalog & Content",
     items: [
+      { tab: "profile", icon: HiOutlineUserCircle, label: "Profile" },
       { tab: "products", icon: HiTag, label: "Products" },
       { tab: "categories", icon: HiTemplate, label: "Categories" },
       { tab: "case-studies", icon: HiDocumentText, label: "Case Studies" },
       { tab: "blog", icon: HiBookOpen, label: "Blog" },
-    ],
+     ],
   },
   {
     title: "CRM",

@@ -5,7 +5,7 @@ import DashboardHome from "./DashboardHome";
 import Profile from "./sections/Profile";
 import ProductTab from "./sections/ProductsTab";
 import Categories from "./sections/Categories";
-import CaseStudies from "./sections/Blog";
+import CaseStudies from "./sections/CaseStudies";
 import Blog from "./sections/Blog";
 import Leads from "./sections/Leads";
 import Inquiries from "./sections/Inquiries";

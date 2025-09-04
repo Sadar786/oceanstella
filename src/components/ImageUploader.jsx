@@ -64,7 +64,7 @@ export default function ImageUploader({ buttonText = "Upload image", onUploaded 
           className="hidden"
           onChange={handlePick}
         />
-        <span className="text-sm font-medium">{busy ? "Uploading…" : buttonText}</span>
+        <span className="text-sm font-medium text-light">{busy ? "Uploading…" : buttonText}</span>
       </label>
 
       {preview ? (

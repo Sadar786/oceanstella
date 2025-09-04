@@ -55,7 +55,7 @@ function Modal({
         <div className="relative w-full max-w-4xl mx-auto rounded-2xl border border-white/10 bg-slate-900/95 shadow-xl backdrop-blur-md pointer-events-auto flex flex-col max-h-[88vh]">
           {/* Header (sticky) */}
           <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 px-6 py-4 bg-slate-900/95">
-            <h2 className="text-lg font-semibold">{title}</h2>
+            <h2 className="text-lg text-light font-semibold">{title}</h2>
             <div className="flex gap-2">
               <button onClick={onClose} className={btnGhost}>
                 Close
@@ -86,6 +86,32 @@ export default function ProductTab() {
   const [categories, setCategories] = useState([]);
 
   const [form, setForm] = useState(emptyForm());
+  // keep raw text separate from the array on the form
+  const [tagsInput, setTagsInput] = useState((form.tags || []).join(","));
+
+  // if form.tags changes from outside, keep input in sync
+  useEffect(() => {
+    setTagsInput((form.tags || []).join(","));
+  }, [form.tags]);
+
+  function parseTagsInput(str) {
+    // forgiving during blur/save — trims, removes empty entries then
+    return str
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  // ✅ only update the text while typing
+  function handleTagsChange(e) {
+    setTagsInput(e.target.value);
+  }
+
+  // ✅ parse & write to form on blur (or on submit)
+  function handleTagsBlur() {
+    setField("tags", parseTagsInput(tagsInput));
+  }
+
   function emptyForm() {
     return {
       name: "",
@@ -124,7 +150,7 @@ export default function ProductTab() {
         `${API}/api/v1/products/admin/list?limit=100&page=1`,
         { credentials: "include" }
       );
-  
+
       const data = await res.json();
       if (data?.ok) setItems(data.items || []);
     } catch (e) {
@@ -154,11 +180,15 @@ export default function ProductTab() {
 
   async function openEditBySlug(slug) {
     try {
-      const res = await fetch(`${API}/api/v1/products/${slug}`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${API}/api/v1/products/admin/by-slug/${encodeURIComponent(slug)}`,
+        {
+          credentials: "include",
+        }
+      );
       const data = await res.json();
-      if (!data?.ok || !data?.item) return;
+      if (!res.ok || !data?.ok || !data?.item)
+        throw new Error(data?.error || "Not found");
       const p = data.item;
       setEditing({ _id: p._id, slug: p.slug });
       setForm({
@@ -181,11 +211,12 @@ export default function ProductTab() {
           description: p.seo?.description || "",
           ogImage: p.seo?.ogImage || "",
         },
-        publishedAt: p.publishedAt ? p.publishedAt.slice(0, 10) : "",
+        publishedAt: p.publishedAt ? String(p.publishedAt).slice(0, 10) : "",
       });
       setOpen(true);
     } catch (e) {
       console.error(e);
+      alert(e.message || "Could not load product");
     }
   }
 
@@ -376,7 +407,7 @@ export default function ProductTab() {
                         <img
                           src={p.images[0].url}
                           alt={p.name}
-                          className="h-10 w-10 rounded-lg object-cover bg-slate-800"
+                          className="h-16 w-16 rounded-lg object-cover bg-slate-800"
                         />
                       ) : (
                         <div className="h-10 w-10 rounded-lg bg-slate-800" />
@@ -621,9 +652,13 @@ export default function ProductTab() {
         <div className="mt-6">
           <label className={labelClass}>Tags (comma separated)</label>
           <input
+            type="text" // make sure it's text
+            inputMode="text"
+            autoComplete="off"
             className={inputClass}
-            value={(form.tags || []).join(", ")}
-            onChange={(e) => setField("tags", parseTagsInput(e.target.value))}
+            value={tagsInput} // <-- raw text, so comma stays
+            onChange={handleTagsChange} // <-- no parsing here
+            onBlur={handleTagsBlur} // <-- parse once user is done
           />
         </div>
 

@@ -1,123 +1,229 @@
-import { useMemo, useState } from "react";
+// src/pages/admin/Users.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import ImageUploader from "../../components/ImageUploader";
 
-const ROLES = ["Administrator", "Editor", "Viewer"];
+const API = import.meta.env.VITE_API_URL?.replace(/\/+$/, "");
+const USERS = `${API}/api/users`; // matches app.use("/api/users", ...)
 
-export default function Users() {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      role: "Administrator",
-      active: true,
-      avatar: "https://i.pravatar.cc/100?img=5",
-      joined: "2025-06-12",
-    },
-    {
-      id: 2,
-      name: "Sara Khan",
-      email: "sara@example.com",
-      role: "Editor",
-      active: true,
-      avatar: "https://i.pravatar.cc/100?img=15",
-      joined: "2025-07-03",
-    },
-    {
-      id: 3,
-      name: "Liam Patel",
-      email: "liam@example.com",
-      role: "Viewer",
-      active: false,
-      avatar: "https://i.pravatar.cc/100?img=3",
-      joined: "2025-08-01",
-    },
-  ]);
+const ROLE_UI = ["Administrator", "Editor", "Viewer"];
+const roleUiToDb = (r) =>
+  ({ Administrator: "admin", Editor: "editor", Viewer: "viewer" }[r] || "viewer");
+const roleDbToUi = (r) =>
+  ({ superadmin: "Administrator", admin: "Administrator", editor: "Editor", viewer: "Viewer" }[r] ||
+    "Viewer");
 
-  const [open, setOpen] = useState(false);
-  const [editingId, setEditingId] = useState(null); // null=create
-  const [form, setForm] = useState({
+const input =
+  "mt-1 w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-2 text-slate-100 placeholder-slate-500 " +
+  "focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-400/40";
+const label = "text-sm text-slate-300";
+const btnPrimary =
+  "rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 px-4 py-2 font-medium text-white shadow hover:opacity-95 disabled:opacity-60";
+const btnGhost =
+  "rounded-xl border border-white/20 px-3 py-2 text-slate-300 hover:bg-white/10";
+
+const chip = (ok) =>
+  "inline-flex rounded-full px-2 py-0.5 text-xs font-medium " +
+  (ok ? "bg-emerald-600/30 text-emerald-300" : "bg-slate-700/40 text-slate-300");
+
+function fmtDate(d) {
+  if (!d) return "—";
+  const x = new Date(d);
+  if (isNaN(x)) return "—";
+  return x.toISOString().slice(0, 10);
+}
+function initialsOf(name = "") {
+  const parts = String(name).trim().split(/\s+/).filter(Boolean);
+  const a = (parts[0]?.[0] || "").toUpperCase();
+  const b = (parts[1]?.[0] || "").toUpperCase();
+  return (a + b) || "•";
+}
+
+/* ---------- Modal (portal + scroll-safe) ---------- */
+function Modal({ open, title, onClose, onSave, saving, saveLabel = "Save", children }) {
+  React.useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
+  if (!open) return null;
+  return createPortal(
+    <div className="fixed inset-0 z-[9999]">
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 p-4 sm:p-6 md:p-8 overflow-y-auto overscroll-contain">
+        <div className="relative w-full max-w-3xl mx-auto rounded-2xl border border-white/10 bg-slate-900/95 shadow-xl backdrop-blur-md pointer-events-auto flex flex-col max-h-[88vh]">
+          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 px-6 py-4 bg-slate-900/95">
+            <h2 className="text-lg font-semibold">{title}</h2>
+            <div className="flex gap-2">
+              <button onClick={onClose} className={btnGhost}>Close</button>
+              <button onClick={onSave} disabled={saving} className={btnPrimary}>
+                {saving ? "Saving…" : saveLabel}
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 py-6">{children}</div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function emptyForm() {
+  return {
     name: "",
     email: "",
-    role: "Viewer",
-    active: true,
-    avatar: "",
-  });
+    role: "Viewer",        // UI label
+    active: true,          // maps to status
+    avatar: { url: "", publicId: "" }, // device-uploaded image
+  };
+}
+
+export default function Users() {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
+  const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState(null); // {_id}? | null
+
+  const [form, setForm] = useState(emptyForm());
   const [query, setQuery] = useState("");
 
-  // derived filtered list
-  const list = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return users;
-    return users.filter(
-      (u) =>
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.role.toLowerCase().includes(q)
-    );
-  }, [users, query]);
+  useEffect(() => { loadUsers(); }, []);
+
+  async function loadUsers() {
+    setLoading(true);
+    setErr("");
+    try {
+      const r = await fetch(`${USERS}/admin?limit=100&page=1`, { credentials: "include" });
+      const j = await r.json();
+      if (!r.ok || !j?.ok) throw new Error(j?.error || "Failed to load users");
+      setRows(j.items || []);
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function openCreate() {
-    setEditingId(null);
-    setForm({ name: "", email: "", role: "Viewer", active: true, avatar: "" });
+    setEditing(null);
+    setForm(emptyForm());
     setOpen(true);
   }
 
   function openEdit(u) {
-    setEditingId(u.id);
+    setEditing({ _id: u._id });
     setForm({
-      name: u.name,
-      email: u.email,
-      role: u.role,
-      active: u.active,
-      avatar: u.avatar || "",
+      name: u.name || "",
+      email: u.email || "",
+      role: roleDbToUi(u.role),
+      active: (u.status || "active") === "active",
+      avatar: u.avatar ? { url: u.avatar, publicId: u.avatarPublicId || "" } : { url: "", publicId: "" },
     });
     setOpen(true);
   }
 
-  function saveUser(e) {
-    e.preventDefault();
+  function onAvatarUploaded(img) {
+    setForm((f) => ({ ...f, avatar: { url: img.url, publicId: img.publicId || "" } }));
+  }
+  function clearAvatar() {
+    setForm((f) => ({ ...f, avatar: { url: "", publicId: "" } }));
+  }
+
+  async function saveUser() {
+    if (saving) return;
     const name = form.name.trim();
-    const email = form.email.trim();
-    if (!name || !email) return;
+    const email = form.email.trim().toLowerCase();
+    if (!name || !email) return alert("Name and Email are required");
 
-    if (editingId == null) {
-      const u = {
-        id: Date.now(),
-        ...form,
-        joined: new Date().toISOString().split("T")[0],
-      };
-      setUsers((prev) => [...prev, u]);
-    } else {
-      setUsers((prev) =>
-        prev.map((u) => (u.id === editingId ? { ...u, ...form } : u))
-      );
+    setSaving(true);
+    setErr("");
+
+    const payload = {
+      name,
+      email,
+      role: roleUiToDb(form.role),
+      status: form.active ? "active" : "disabled",
+      avatar: form.avatar?.url ? { url: form.avatar.url, publicId: form.avatar.publicId || "" } : null,
+    };
+
+    try {
+      if (!editing) {
+        const r = await fetch(`${USERS}/admin`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        });
+        const j = await r.json();
+        if (!r.ok || !j?.ok) throw new Error(j?.error || "Create failed");
+      } else {
+        const r = await fetch(`${USERS}/admin/${editing._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        });
+        const j = await r.json();
+        if (!r.ok || !j?.ok) throw new Error(j?.error || "Update failed");
+      }
+      setOpen(false);
+      await loadUsers();
+    } catch (e) {
+      setErr(e.message || "Save failed");
+    } finally {
+      setSaving(false);
     }
-    setOpen(false);
   }
 
-  function removeUser(id) {
-    const ok = window.confirm("Delete this user?");
+  async function removeUser(u) {
+    const ok = window.confirm(`Delete user “${u.name}”?`);
     if (!ok) return;
-    setUsers((prev) => prev.filter((u) => u.id !== id));
+    try {
+      const r = await fetch(`${USERS}/admin/${u._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const j = await r.json();
+      if (!r.ok || !j?.ok) throw new Error(j?.error || "Delete failed");
+      await loadUsers();
+    } catch (e) {
+      alert(e.message || "Delete failed");
+    }
   }
 
-  function toggleActive(u) {
-    setUsers((prev) =>
-      prev.map((x) => (x.id === u.id ? { ...x, active: !x.active } : x))
+  async function toggleActive(u) {
+    try {
+      const toActive = (u.status || "active") !== "active";
+      const r = await fetch(`${USERS}/admin/${u._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: toActive ? "active" : "disabled" }),
+      });
+      const j = await r.json();
+      if (!r.ok || !j?.ok) throw new Error(j?.error || "Toggle failed");
+      await loadUsers();
+    } catch (e) {
+      alert(e.message || "Toggle failed");
+    }
+  }
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return rows;
+    return (rows || []).filter(
+      (u) =>
+        (u.name || "").toLowerCase().includes(q) ||
+        (u.email || "").toLowerCase().includes(q) ||
+        roleDbToUi(u.role).toLowerCase().includes(q)
     );
-  }
-
-  const input =
-    "mt-1 w-full rounded-xl bg-slate-900/60 border border-white/10 px-3 py-2 text-slate-100 placeholder-slate-500 " +
-    "focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-400/40";
-  const label = "text-sm text-slate-300";
-  const btnPrimary =
-    "rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 px-4 py-2 font-medium text-white shadow hover:opacity-95";
-  const btnGhost =
-    "rounded-xl border border-white/20 px-3 py-2 text-slate-300 hover:bg-white/10";
-  const chip = (ok) =>
-    "inline-flex rounded-full px-2 py-0.5 text-xs font-medium " +
-    (ok ? "bg-emerald-600/30 text-emerald-300" : "bg-slate-700/40 text-slate-300");
+  }, [rows, query]);
 
   return (
     <section className="space-y-6">
@@ -138,6 +244,12 @@ export default function Users() {
         </div>
       </div>
 
+      {err && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          {err}
+        </div>
+      )}
+
       {/* Table */}
       <div className="overflow-x-auto rounded-2xl border border-white/10">
         <table className="min-w-full text-sm">
@@ -152,9 +264,14 @@ export default function Users() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
-            {list.map((u) => (
-              <tr key={u.id} className="hover:bg-slate-800/40">
-                {/* user */}
+            {loading && (
+              <tr><td className="px-4 py-6 text-slate-400" colSpan={6}>Loading…</td></tr>
+            )}
+            {!loading && filtered.length === 0 && (
+              <tr><td className="px-4 py-6 text-slate-400" colSpan={6}>No users found.</td></tr>
+            )}
+            {!loading && filtered.map((u) => (
+              <tr key={u._id} className="hover:bg-slate-800/40">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     {u.avatar ? (
@@ -164,42 +281,41 @@ export default function Users() {
                         className="h-10 w-10 rounded-full object-cover bg-slate-800"
                       />
                     ) : (
-                      <div className="h-10 w-10 rounded-full bg-slate-800" />
+                      <div className="h-10 w-10 rounded-full bg-slate-700 grid place-items-center text-slate-200 text-xs font-semibold">
+                        {initialsOf(u.name)}
+                      </div>
                     )}
                     <div>
                       <div className="font-medium">{u.name}</div>
-                      <div className="text-xs text-slate-500">ID: {u.id}</div>
+                      <div className="text-xs text-slate-500">{u._id}</div>
                     </div>
                   </div>
                 </td>
-
                 <td className="px-4 py-3">{u.email}</td>
-                <td className="px-4 py-3">{u.role}</td>
-                <td className="px-4 py-3">{u.joined}</td>
-
-                {/* status pill + toggle */}
+                <td className="px-4 py-3">{roleDbToUi(u.role)}</td>
+                <td className="px-4 py-3">{fmtDate(u.createdAt)}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <span className={chip(u.active)}>{u.active ? "Active" : "Disabled"}</span>
+                    <span className={chip((u.status || "active") === "active")}>
+                      {(u.status || "active") === "active" ? "Active" : "Disabled"}
+                    </span>
                     <button
                       onClick={() => toggleActive(u)}
                       className={
                         "relative h-6 w-11 rounded-full transition " +
-                        (u.active ? "bg-emerald-500/70" : "bg-slate-700")
+                        ((u.status || "active") === "active" ? "bg-emerald-500/70" : "bg-slate-700")
                       }
                       title="Toggle active"
                     >
                       <span
                         className={
                           "absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-white transition " +
-                          (u.active ? "left-6" : "left-1")
+                          ((u.status || "active") === "active" ? "left-6" : "left-1")
                         }
                       />
                     </button>
                   </div>
                 </td>
-
-                {/* actions */}
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
                     <button
@@ -209,7 +325,7 @@ export default function Users() {
                       Edit
                     </button>
                     <button
-                      onClick={() => removeUser(u.id)}
+                      onClick={() => removeUser(u)}
                       className="rounded-lg px-3 py-1.5 text-xs font-medium text-rose-200 bg-rose-700/30 hover:bg-rose-700/50"
                     >
                       Delete
@@ -220,113 +336,102 @@ export default function Users() {
             ))}
           </tbody>
         </table>
-
-        {list.length === 0 && (
-          <div className="p-6 text-center text-slate-400">No users match your search.</div>
-        )}
       </div>
 
-      {/* Create / Edit Modal */}
-      {open && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">
-              {editingId == null ? "Add User" : "Update User"}
-            </h2>
-            <form onSubmit={saveUser} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <label className={label} htmlFor="name">Full name</label>
-                <input
-                  id="name"
-                  className={input}
-                  value={form.name}
-                  onChange={(e) => setForm((v) => ({ ...v, name: e.target.value }))}
-                  required
+      {/* Modal */}
+      <Modal
+        open={open}
+        title={editing ? "Update User" : "Add User"}
+        onClose={() => setOpen(false)}
+        onSave={saveUser}
+        saving={saving}
+        saveLabel={editing ? "Update" : "Save"}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Avatar */}
+          <div className="md:col-span-2">
+            <div className="flex items-center justify-between">
+              <label className={label}>Avatar</label>
+              <ImageUploader
+                buttonText={form.avatar?.url ? "Change avatar" : "Upload avatar"}
+                onUploaded={onAvatarUploaded}
+              />
+            </div>
+            {form.avatar?.url ? (
+              <div className="mt-2 flex items-center gap-3">
+                <img
+                  src={form.avatar.url}
+                  alt="Avatar"
+                  className="h-14 w-14 rounded-full object-cover ring-1 ring-white/10"
                 />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className={label} htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  type="email"
-                  className={input}
-                  value={form.email}
-                  onChange={(e) => setForm((v) => ({ ...v, email: e.target.value }))}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className={label} htmlFor="role">Role</label>
-                <select
-                  id="role"
-                  className={input}
-                  value={form.role}
-                  onChange={(e) => setForm((v) => ({ ...v, role: e.target.value }))}
+                <button
+                  type="button"
+                  onClick={clearAvatar}
+                  className="text-xs px-2 py-1 rounded-lg border border-white/15 hover:bg-white/10"
                 >
-                  {ROLES.map((r) => (
-                    <option key={r}>{r}</option>
-                  ))}
-                </select>
+                  Remove
+                </button>
               </div>
+            ) : (
+              <p className="mt-2 text-sm text-slate-400">No avatar yet.</p>
+            )}
+          </div>
 
-              <div>
-                <label className={label} htmlFor="avatar">Avatar URL</label>
-                <input
-                  id="avatar"
-                  className={input}
-                  placeholder="https://…"
-                  value={form.avatar}
-                  onChange={(e) => setForm((v) => ({ ...v, avatar: e.target.value }))}
+          <div className="md:col-span-2">
+            <label className={label}>Full name</label>
+            <input
+              className={input}
+              value={form.name}
+              onChange={(e) => setForm((v) => ({ ...v, name: e.target.value }))}
+              required
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className={label}>Email</label>
+            <input
+              type="email"
+              className={input}
+              value={form.email}
+              onChange={(e) => setForm((v) => ({ ...v, email: e.target.value.toLowerCase() }))}
+              required
+            />
+          </div>
+
+          <div>
+            <label className={label}>Role</label>
+            <select
+              className={input}
+              value={form.role}
+              onChange={(e) => setForm((v) => ({ ...v, role: e.target.value }))}
+            >
+              {ROLE_UI.map((r) => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className={label}>Active</label>
+            <div className="mt-1">
+              <button
+                type="button"
+                onClick={() => setForm((v) => ({ ...v, active: !v.active }))}
+                className={
+                  "relative h-6 w-11 rounded-full transition " +
+                  (form.active ? "bg-emerald-500/70" : "bg-slate-700")
+                }
+                title="Toggle active"
+              >
+                <span
+                  className={
+                    "absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-white transition " +
+                    (form.active ? "left-6" : "left-1")
+                  }
                 />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className={label} htmlFor="active">Active</label>
-                <div className="mt-1">
-                  <button
-                    type="button"
-                    onClick={() => setForm((v) => ({ ...v, active: !v.active }))}
-                    className={
-                      "relative h-6 w-11 rounded-full transition " +
-                      (form.active ? "bg-emerald-500/70" : "bg-slate-700")
-                    }
-                    title="Toggle active"
-                  >
-                    <span
-                      className={
-                        "absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-white transition " +
-                        (form.active ? "left-6" : "left-1")
-                      }
-                    />
-                  </button>
-                </div>
-              </div>
-
-              {form.avatar && (
-                <div className="md:col-span-2 rounded-xl border border-white/10 bg-slate-800/40 p-3">
-                  <div className="text-xs mb-2 text-slate-400">Avatar preview</div>
-                  <img
-                    src={form.avatar}
-                    alt="avatar preview"
-                    className="h-16 w-16 rounded-full object-cover"
-                  />
-                </div>
-              )}
-
-              <div className="md:col-span-2 flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setOpen(false)} className={btnGhost}>
-                  Cancel
-                </button>
-                <button type="submit" className={btnPrimary}>
-                  {editingId == null ? "Save" : "Update"}
-                </button>
-              </div>
-            </form>
+              </button>
+            </div>
           </div>
         </div>
-      )}
+      </Modal>
     </section>
   );
 }

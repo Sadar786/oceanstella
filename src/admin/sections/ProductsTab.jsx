@@ -1,9 +1,11 @@
+// src/pages/admin/ProductTab.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import ImageUploader from "../../components/ImageUploader"; // adjust if needed
 
 const API = import.meta.env.VITE_API_URL;
 
+/* ---------------- Utils & UI classes ---------------- */
 function slugify(s) {
   return String(s || "")
     .toLowerCase()
@@ -22,15 +24,7 @@ const btnGhost =
   "rounded-xl border border-white/20 px-3 py-2 text-slate-300 hover:bg-white/10";
 
 /* ---------------- Modal (Portal + scroll-safe) ---------------- */
-function Modal({
-  open,
-  title,
-  onClose,
-  onSave,
-  saving,
-  saveLabel = "Save",
-  children,
-}) {
+function Modal({ open, title, onClose, onSave, saving, saveLabel = "Save", children }) {
   React.useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -44,18 +38,14 @@ function Modal({
   return createPortal(
     <div className="fixed inset-0 z-[9999]">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
       {/* Scroll container */}
-      <div className="absolute inset-0 p-4 sm:p-6 md:p-8 overflow-y-auto overscroll-contain">
+      <div className="absolute inset-0 overflow-y-auto overscroll-contain p-4 sm:p-6 md:p-8">
         {/* Modal card */}
-        <div className="relative w-full max-w-4xl mx-auto rounded-2xl border border-white/10 bg-slate-900/95 shadow-xl backdrop-blur-md pointer-events-auto flex flex-col max-h-[88vh]">
+        <div className="pointer-events-auto relative mx-auto flex max-h-[88vh] w-full max-w-4xl flex-col rounded-2xl border border-white/10 bg-slate-900/95 shadow-xl backdrop-blur-md">
           {/* Header (sticky) */}
-          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 px-6 py-4 bg-slate-900/95">
-            <h2 className="text-lg text-light font-semibold">{title}</h2>
+          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 bg-slate-900/95 px-6 py-4">
+            <h2 className="text-lg font-semibold text-light">{title}</h2>
             <div className="flex gap-2">
               <button onClick={onClose} className={btnGhost}>
                 Close
@@ -86,28 +76,27 @@ export default function ProductTab() {
   const [categories, setCategories] = useState([]);
 
   const [form, setForm] = useState(emptyForm());
-  // keep raw text separate from the array on the form
+
+  // tags input raw text (kept separate from array)
   const [tagsInput, setTagsInput] = useState((form.tags || []).join(","));
 
-  // if form.tags changes from outside, keep input in sync
+  // keep tagsInput in sync if form.tags changes
   useEffect(() => {
     setTagsInput((form.tags || []).join(","));
   }, [form.tags]);
 
   function parseTagsInput(str) {
-    // forgiving during blur/save — trims, removes empty entries then
-    return str
+    return String(str || "")
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
   }
 
-  // ✅ only update the text while typing
+  // only update text while typing
   function handleTagsChange(e) {
     setTagsInput(e.target.value);
   }
-
-  // ✅ parse & write to form on blur (or on submit)
+  // parse & write to form on blur/submit
   function handleTagsBlur() {
     setField("tags", parseTagsInput(tagsInput));
   }
@@ -133,10 +122,7 @@ export default function ProductTab() {
     };
   }
 
-  const primaryImage = useMemo(
-    () => form.images?.[0]?.url || "",
-    [form.images]
-  );
+  const primaryImage = useMemo(() => form.images?.[0]?.url || "", [form.images]);
 
   useEffect(() => {
     loadProducts();
@@ -146,11 +132,9 @@ export default function ProductTab() {
   async function loadProducts() {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${API}/api/v1/products/admin/list?limit=100&page=1`,
-        { credentials: "include" }
-      );
-
+      const res = await fetch(`${API}/api/v1/products/admin/list?limit=100&page=1`, {
+        credentials: "include",
+      });
       const data = await res.json();
       if (data?.ok) setItems(data.items || []);
     } catch (e) {
@@ -162,9 +146,7 @@ export default function ProductTab() {
 
   async function loadCategories() {
     try {
-      const res = await fetch(`${API}/api/v1/categories`, {
-        credentials: "include",
-      });
+      const res = await fetch(`${API}/api/v1/categories`, { credentials: "include" });
       const data = await res.json();
       setCategories(data?.items || data?.categories || []);
     } catch (e) {
@@ -180,15 +162,11 @@ export default function ProductTab() {
 
   async function openEditBySlug(slug) {
     try {
-      const res = await fetch(
-        `${API}/api/v1/products/admin/by-slug/${encodeURIComponent(slug)}`,
-        {
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`${API}/api/v1/products/admin/by-slug/${encodeURIComponent(slug)}`, {
+        credentials: "include",
+      });
       const data = await res.json();
-      if (!res.ok || !data?.ok || !data?.item)
-        throw new Error(data?.error || "Not found");
+      if (!res.ok || !data?.ok || !data?.item) throw new Error(data?.error || "Not found");
       const p = data.item;
       setEditing({ _id: p._id, slug: p.slug });
       setForm({
@@ -226,19 +204,29 @@ export default function ProductTab() {
   function setSeoField(k, v) {
     setForm((f) => ({ ...f, seo: { ...f.seo, [k]: v } }));
   }
-  function parseTagsInput(s) {
-    return s
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+
+  /* ---------------- Specs helpers (Quick Specs) ---------------- */
+  function getSpecValue(key) {
+    return (form.specs || []).find((s) => s.key?.toLowerCase() === key.toLowerCase())?.value || "";
+  }
+  function setSpecValue(key, value) {
+    setForm((f) => {
+      const specs = [...(f.specs || [])];
+      const idx = specs.findIndex((s) => s.key?.toLowerCase() === key.toLowerCase());
+      if (value === "") {
+        if (idx !== -1) specs.splice(idx, 1);
+      } else if (idx === -1) {
+        specs.push({ key, value });
+      } else {
+        specs[idx] = { ...specs[idx], value };
+      }
+      return { ...f, specs };
+    });
   }
 
-  // Specs
+  // Specs repeater controls
   function addSpec() {
-    setForm((f) => ({
-      ...f,
-      specs: [...(f.specs || []), { key: "", value: "" }],
-    }));
+    setForm((f) => ({ ...f, specs: [...(f.specs || []), { key: "", value: "" }] }));
   }
   function updateSpec(i, patch) {
     setForm((f) => {
@@ -248,16 +236,10 @@ export default function ProductTab() {
     });
   }
   function removeSpec(i) {
-    setForm((f) => ({
-      ...f,
-      specs: (f.specs || []).filter((_, idx) => idx !== i),
-    }));
+    setForm((f) => ({ ...f, specs: (f.specs || []).filter((_, idx) => idx !== i) }));
   }
 
   // Images
-  function falsy(val) {
-    return val === undefined || val === null || val === "";
-  }
   function onUploaded(img) {
     setForm((f) => ({
       ...f,
@@ -271,13 +253,8 @@ export default function ProductTab() {
     if (editing?._id && img?.publicId) {
       try {
         await fetch(
-          `${API}/api/v1/products/${editing._id}/images/${encodeURIComponent(
-            img.publicId
-          )}`,
-          {
-            method: "DELETE",
-            credentials: "include",
-          }
+          `${API}/api/v1/products/${editing._id}/images/${encodeURIComponent(img.publicId)}`,
+          { method: "DELETE", credentials: "include" }
         );
       } catch (e) {
         console.error(e);
@@ -308,9 +285,7 @@ export default function ProductTab() {
         description: form.seo.description,
         ogImage: form.seo.ogImage,
       },
-      publishedAt: form.publishedAt
-        ? new Date(form.publishedAt).toISOString()
-        : null,
+      publishedAt: form.publishedAt ? new Date(form.publishedAt).toISOString() : null,
     };
 
     try {
@@ -348,8 +323,7 @@ export default function ProductTab() {
           body: JSON.stringify({ images: form.images }),
         });
         const j2 = await r2.json();
-        if (!r2.ok || !j2?.ok)
-          throw new Error(j2?.error || "Images update failed");
+        if (!r2.ok || !j2?.ok) throw new Error(j2?.error || "Images update failed");
       }
 
       setOpen(false);
@@ -419,25 +393,21 @@ export default function ProductTab() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    {p.price != null
-                      ? `${p.currency || "AED"} ${Number(p.price).toFixed(2)}`
-                      : "—"}
+                    {p.price != null ? `${p.currency || "AED"} ${Number(p.price).toFixed(2)}` : "—"}
                   </td>
                   <td className="px-4 py-3">{p.status}</td>
-                  <td className="px-4 py-3">
-                    {p.publishedAt ? p.publishedAt.slice(0, 10) : "—"}
-                  </td>
+                  <td className="px-4 py-3">{p.publishedAt ? p.publishedAt.slice(0, 10) : "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => openEditBySlug(p.slug)}
-                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-white bg-slate-700 hover:bg-slate-600"
+                        className="rounded-lg bg-slate-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-600"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => deleteProduct(p)}
-                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-rose-200 bg-rose-700/30 hover:bg-rose-700/50"
+                        className="rounded-lg bg-rose-700/30 px-3 py-1.5 text-xs font-medium text-rose-200 hover:bg-rose-700/50"
                       >
                         Delete
                       </button>
@@ -447,20 +417,14 @@ export default function ProductTab() {
               ))}
             {loading && (
               <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-6 text-center text-slate-400"
-                >
+                <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
                   Loading…
                 </td>
               </tr>
             )}
             {!loading && items.length === 0 && (
               <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-6 text-center text-slate-400"
-                >
+                <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
                   No products yet.
                 </td>
               </tr>
@@ -479,7 +443,7 @@ export default function ProductTab() {
         saveLabel={editing ? "Update" : "Save"}
       >
         {/* Basic */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className={labelClass}>Name</label>
             <input
@@ -504,19 +468,11 @@ export default function ProductTab() {
           </div>
           <div>
             <label className={labelClass}>SKU</label>
-            <input
-              className={inputClass}
-              value={form.sku}
-              onChange={(e) => setField("sku", e.target.value)}
-            />
+            <input className={inputClass} value={form.sku} onChange={(e) => setField("sku", e.target.value)} />
           </div>
           <div>
             <label className={labelClass}>Status</label>
-            <select
-              className={inputClass}
-              value={form.status}
-              onChange={(e) => setField("status", e.target.value)}
-            >
+            <select className={inputClass} value={form.status} onChange={(e) => setField("status", e.target.value)}>
               <option value="draft">draft</option>
               <option value="published">published</option>
               <option value="archived">archived</option>
@@ -550,26 +506,23 @@ export default function ProductTab() {
 
         {/* Images */}
         <div className="mt-6">
-          <div className="flex items-center text-slate-50  justify-between mb-2">
+          <div className="mb-2 flex items-center justify-between text-slate-50">
             <label className={labelClass}>Images</label>
             <ImageUploader buttonText="Add image" onUploaded={onUploaded} />
           </div>
           {form.images?.length ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {form.images.map((img, i) => (
-                <div
-                  key={img.publicId || img.url + i}
-                  className="relative group"
-                >
+                <div key={img.publicId || img.url + i} className="group relative">
                   <img
                     src={img.url}
                     alt=""
-                    className="w-full aspect-square object-cover rounded-xl ring-1 ring-white/10"
+                    className="aspect-square w-full rounded-xl object-cover ring-1 ring-white/10"
                   />
                   <button
                     type="button"
                     onClick={() => removeImageAt(i)}
-                    className="absolute top-2 right-2 px-2 py-1 text-xs rounded bg-black/70 text-white opacity-0 group-hover:opacity-100"
+                    className="absolute right-2 top-2 rounded bg-black/70 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100"
                   >
                     Remove
                   </button>
@@ -582,7 +535,7 @@ export default function ProductTab() {
         </div>
 
         {/* Summary + Description */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className={labelClass}>Summary</label>
             <textarea
@@ -602,7 +555,7 @@ export default function ProductTab() {
         </div>
 
         {/* Price, currency, featured, sortOrder */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           <div className="md:col-span-2">
             <label className={labelClass}>Price</label>
             <input
@@ -648,21 +601,50 @@ export default function ProductTab() {
           </div>
         </div>
 
-        {/* Tags */}
+        {/* Quick Specs (writes into form.specs) */}
         <div className="mt-6">
-          <label className={labelClass}>Tags (comma separated)</label>
-          <input
-            type="text" // make sure it's text
-            inputMode="text"
-            autoComplete="off"
-            className={inputClass}
-            value={tagsInput} // <-- raw text, so comma stays
-            onChange={handleTagsChange} // <-- no parsing here
-            onBlur={handleTagsBlur} // <-- parse once user is done
-          />
+          <h3 className="mb-2 font-medium text-slate-200">Quick Specs</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div>
+              <label className={labelClass}>Length</label>
+              <input
+                className={inputClass}
+                placeholder="e.g. 32 ft"
+                value={getSpecValue("length")}
+                onChange={(e) => setSpecValue("length", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Beam</label>
+              <input
+                className={inputClass}
+                placeholder="e.g. 10.5 ft"
+                value={getSpecValue("beam")}
+                onChange={(e) => setSpecValue("beam", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Max Speed</label>
+              <input
+                className={inputClass}
+                placeholder="e.g. 40 kn"
+                value={getSpecValue("speed")}
+                onChange={(e) => setSpecValue("speed", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Seats</label>
+              <input
+                className={inputClass}
+                placeholder="e.g. 8"
+                value={getSpecValue("seats")}
+                onChange={(e) => setSpecValue("seats", e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Specs */}
+        {/* Specs (dynamic list) */}
         <div className="mt-6">
           <div className="flex items-center justify-between">
             <label className={labelClass}>Specs</label>
@@ -671,9 +653,9 @@ export default function ProductTab() {
             </button>
           </div>
           {(form.specs || []).length === 0 ? (
-            <div className="text-sm text-slate-400 mt-2">No specs yet.</div>
+            <div className="mt-2 text-sm text-slate-400">No specs yet.</div>
           ) : (
-            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2">
               {form.specs.map((s, i) => (
                 <div key={i} className="flex gap-2">
                   <input
@@ -688,17 +670,27 @@ export default function ProductTab() {
                     value={s.value}
                     onChange={(e) => updateSpec(i, { value: e.target.value })}
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeSpec(i)}
-                    className={btnGhost}
-                  >
+                  <button type="button" onClick={() => removeSpec(i)} className={btnGhost}>
                     Remove
                   </button>
                 </div>
               ))}
             </div>
           )}
+        </div>
+
+        {/* Tags */}
+        <div className="mt-6">
+          <label className={labelClass}>Tags (comma separated)</label>
+          <input
+            type="text"
+            inputMode="text"
+            autoComplete="off"
+            className={inputClass}
+            value={tagsInput}
+            onChange={handleTagsChange}
+            onBlur={handleTagsBlur}
+          />
         </div>
       </Modal>
     </section>

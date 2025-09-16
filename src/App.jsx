@@ -15,7 +15,9 @@ import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import RequireAuth from "./components/RequireAuth";
 import Profile from "./pages/Profile";
- 
+ import ModelDetail from "./pages/ModelDetail";
+
+
 export default function App() {
   return (
     <HashRouter>
@@ -23,6 +25,7 @@ export default function App() {
       <MainLayout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/models/:slug" element={<ModelDetail />} />
           <Route path="/products" element={<Products />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

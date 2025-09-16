@@ -1,6 +1,5 @@
 // src/components/WhyTrustUs.jsx
-import FadeInOnScroll from "./FadeInOnScroll";
-
+ 
 const stats = [
   { label: "Vessels Delivered", value: "100+" },
   { label: "Years Experience",   value: "10+"  },
@@ -10,7 +9,6 @@ const stats = [
 
 export default function WhyTrustUs() {
   return (
-    <FadeInOnScroll>
       <section className="mx-auto max-w-6xl px-4 py-12 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
         {stats.map((stat) => (
           <div
@@ -26,6 +24,5 @@ export default function WhyTrustUs() {
           </div>
         ))}
       </section>
-    </FadeInOnScroll>
-  );
+   );
 }

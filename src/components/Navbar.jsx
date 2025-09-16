@@ -40,7 +40,7 @@ const navLinks = [
 ];
 
 const services = [
-  { name: "Boat Making", slug: "boat-making" },
+  { name: "Boat Building", slug: "boat-making" },
   { name: "Boat Painting", slug: "boat-painting" },
   { name: "Maintenance", slug: "maintenance" },
 ];
@@ -48,8 +48,9 @@ const services = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false); // mobile submenu
-  const [authOpen, setAuthOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false); // auth open or not 
+  const [scrolled, setScrolled] = useState(false);  // scrolled or not 
+  
 
   // with HashRouter, pathname is '/route' (the hash is handled internally)
   const { pathname } = useLocation();
@@ -218,7 +219,7 @@ export default function Navbar() {
                   </span>
                   <span>
                     <span className="block font-semibold leading-tight text-dark dark:text-light">
-                      Boat Making
+                      Boat Building
                     </span>
                     <span className="block text-xs text-slate-600 dark:text-slate-300">
                       Custom builds, hull design & sea trials

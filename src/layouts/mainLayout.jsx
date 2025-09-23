@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import FloatingButton from "../components/FloatingButton";
 
 export default function MainLayout({ children }) {
   const mode = useSelector((state) => state.theme.mode); // get current theme from Redux
@@ -11,6 +12,8 @@ export default function MainLayout({ children }) {
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <FloatingButton />
+
       </div>
     </div>
   );

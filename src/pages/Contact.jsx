@@ -1,8 +1,105 @@
-// src/pages/Contact.jsx  (or keep your filename as CT.jsx and adjust export)
+// src/pages/Contact.jsx
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { RiFacebookFill, RiInstagramFill, RiWhatsappFill } from "react-icons/ri";
 import { FiPhone, FiMail, FiClock, FiMapPin } from "react-icons/fi";
 
+const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/+$/, "") || "";
+const INQUIRIES = `${API_BASE}/api/v1/inquiries`;
+
 export default function Contact() {
+  const [sp] = useSearchParams();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    service: "Boat Making", // UI only; will map to subject
+    message: "",
+    quantity: "",
+    consent: false,
+    productId: sp.get("productId") || "",
+    subject: sp.get("subject") || "", // if someone links with ?subject=...
+    // honeypot
+    company: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [okMsg, setOkMsg] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+
+  useEffect(() => {
+    if (!form.subject && form.service) {
+      setForm((f) => ({ ...f, subject: f.service }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const canSubmit = useMemo(() => {
+    return (
+      form.name.trim().length >= 2 &&
+      /.+@.+\..+/.test(form.email) &&
+      form.message.trim().length >= 5 &&
+      form.consent &&
+      !submitting
+    );
+  }, [form, submitting]);
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setOkMsg("");
+    setErrMsg("");
+
+    // block bots via honeypot
+    if (form.company) {
+      setErrMsg("Form failed validation. Please try again.");
+      return;
+    }
+
+    if (!canSubmit) {
+      setErrMsg("Please complete required fields correctly.");
+      return;
+    }
+
+    const payload = {
+      productId: form.productId || undefined,
+      name: form.name.trim(),
+      email: form.email.trim().toLowerCase(),
+      phone: form.phone.trim(),
+      subject: (form.subject || form.service || "").trim(),
+      message: form.message.trim(),
+      quantity: form.quantity === "" ? undefined : Number(form.quantity),
+      source: "website",
+    };
+
+    try {
+      setSubmitting(true);
+      const r = await fetch(INQUIRIES, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j?.ok) throw new Error(j?.error || "Failed to send inquiry");
+
+      setOkMsg("Thanks! Your message has been sent. We'll get back within 24 hours.");
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        service: "Boat Making",
+        message: "",
+        quantity: "",
+        consent: false,
+        productId: sp.get("productId") || "",
+        subject: "",
+        company: "",
+      });
+    } catch (e) {
+      setErrMsg(e.message || "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <div className="bg-light dark:bg-[#0F1B2A]">
       {/* HERO */}
@@ -38,7 +135,9 @@ export default function Contact() {
                 Email
               </a>
               <a
-                href="https://wa.me/+971551234567"
+                href={`https://wa.me/+971551234567?text=${encodeURIComponent(
+                  "Hi Ocean Stella — I have a question about your services."
+                )}`}
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-full border border-white/70 px-5 py-3 font-semibold text-light hover:bg-white/10 transition"
@@ -126,7 +225,7 @@ export default function Contact() {
                   <RiInstagramFill />
                 </a>
                 <a
-                  href="https://wa.me/+971551234567"
+                  href={`https://wa.me/+923322649000?text=${encodeURIComponent("Hi, I'm interested in your services.")}`}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="WhatsApp"
@@ -138,14 +237,37 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* RIGHT: Contact Form */}
+          {/* RIGHT: Contact Form (wired) */}
           <div className="rounded-2xl bg-white dark:bg-slate-800 p-6 sm:p-8 shadow-md ring-1 ring-black/5 dark:ring-white/10">
             <h2 className="text-2xl font-bold text-dark dark:text-light">Send a Message</h2>
             <p className="mt-1 text-slate-600 dark:text-slate-300">
               Tell us a bit about your project or the service you need.
             </p>
 
-            <form className="mt-6 grid gap-5">
+            {/* alerts */}
+            {okMsg && (
+              <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200">
+                {okMsg}
+              </div>
+            )}
+            {errMsg && (
+              <div className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-800 dark:text-rose-200">
+                {errMsg}
+              </div>
+            )}
+
+            <form className="mt-6 grid gap-5" onSubmit={onSubmit}>
+              {/* honeypot (hidden) */}
+              <div className="hidden">
+                <label>Company</label>
+                <input
+                  autoComplete="off"
+                  tabIndex={-1}
+                  value={form.company}
+                  onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))}
+                />
+              </div>
+
               {/* name + email */}
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
@@ -155,6 +277,9 @@ export default function Contact() {
                     className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-dark placeholder-slate-400
                                focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-900 dark:text-light dark:border-slate-700"
                     placeholder="Your name"
+                    value={form.name}
+                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                    required
                   />
                 </div>
                 <div>
@@ -164,6 +289,9 @@ export default function Contact() {
                     className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-dark placeholder-slate-400
                                focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-900 dark:text-light dark:border-slate-700"
                     placeholder="you@domain.com"
+                    value={form.email}
+                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                    required
                   />
                 </div>
               </div>
@@ -177,6 +305,8 @@ export default function Contact() {
                     className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-dark placeholder-slate-400
                                focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-900 dark:text-light dark:border-slate-700"
                     placeholder="+971 55 123 4567"
+                    value={form.phone}
+                    onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                   />
                 </div>
                 <div>
@@ -184,7 +314,8 @@ export default function Contact() {
                   <select
                     className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-dark
                                focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-900 dark:text-light dark:border-slate-700"
-                    defaultValue="Boat Making"
+                    value={form.service}
+                    onChange={(e) => setForm((f) => ({ ...f, service: e.target.value, subject: e.target.value }))}
                   >
                     <option>Boat Making</option>
                     <option>Boat Painting</option>
@@ -194,20 +325,56 @@ export default function Contact() {
                 </div>
               </div>
 
+              {/* subject */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Subject (optional)</label>
+                <input
+                  type="text"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-dark placeholder-slate-400
+                             focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-900 dark:text-light dark:border-slate-700"
+                  placeholder="e.g., Pricing details?"
+                  value={form.subject}
+                  onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
+                />
+              </div>
+
               {/* message */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Message</label>
                 <textarea
-                  rows="5"
+                  rows={5}
                   className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-dark placeholder-slate-400
                              focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-900 dark:text-light dark:border-slate-700"
                   placeholder="Tell us about your project, timeline, budget, etc."
+                  value={form.message}
+                  onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                  required
+                />
+              </div>
+
+              {/* quantity (optional) */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Quantity (optional)</label>
+                <input
+                  type="number"
+                  min={1}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-dark placeholder-slate-400
+                             focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-900 dark:text-light dark:border-slate-700"
+                  placeholder="1"
+                  value={form.quantity}
+                  onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
                 />
               </div>
 
               {/* consent */}
               <label className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300">
-                <input type="checkbox" className="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/40" />
+                <input
+                  type="checkbox"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/40"
+                  checked={form.consent}
+                  onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))}
+                  required
+                />
                 I agree to be contacted by Ocean Stella about my inquiry.
               </label>
 
@@ -215,12 +382,20 @@ export default function Contact() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="submit"
-                  className="rounded-full bg-accent px-6 py-3 font-semibold text-dark hover:bg-primary hover:text-light transition"
+                  disabled={!canSubmit}
+                  className={`rounded-full px-6 py-3 font-semibold transition ${
+                    canSubmit
+                      ? "bg-accent text-dark hover:bg-primary hover:text-light"
+                      : "bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-700 dark:text-slate-400"
+                  }`}
                 >
-                  Send Message
+                  {submitting ? "Sending…" : "Send Message"}
                 </button>
                 <a
-                  href="https://wa.me/+971551234567"
+                  href={`https://wa.me/+971551234567?text=${encodeURIComponent(
+                    `Hi Ocean Stella — My name is ${form.name || "(your name)"}. ` +
+                      `I’m inquiring about ${form.subject || form.service}.`
+                  )}`}
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full border border-primary px-6 py-3 font-semibold text-primary hover:bg-primary hover:text-light transition"

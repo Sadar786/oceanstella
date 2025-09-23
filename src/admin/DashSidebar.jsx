@@ -1,5 +1,5 @@
 // src/admin/DashSidebar.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   HiMenuAlt2,
@@ -16,7 +16,6 @@ import {
   HiUser,
   HiOutlineUserCircle,
 } from "react-icons/hi";
-
 import { useDispatch } from "react-redux";
 import { doSignOut } from "../redux/user/userThunks";
 
@@ -27,9 +26,7 @@ function cx(...cls) {
 const SECTIONS = [
   {
     title: "Overview",
-    items: [
-      { tab: "dashboard", icon: HiChartPie, label: "Dashboard" },
-    ],
+    items: [{ tab: "dashboard", icon: HiChartPie, label: "Dashboard" }],
   },
   {
     title: "Catalog & Content",
@@ -39,7 +36,7 @@ const SECTIONS = [
       { tab: "categories", icon: HiTemplate, label: "Categories" },
       { tab: "case-studies", icon: HiDocumentText, label: "Case Studies" },
       { tab: "blog", icon: HiBookOpen, label: "Blog" },
-     ],
+    ],
   },
   {
     title: "CRM",
@@ -58,7 +55,7 @@ const SECTIONS = [
   },
 ];
 
-export default function DashSidebar({ activeTab }) {
+export default function DashSidebar({ activeTab, isViewer = false }) {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(false);
@@ -75,13 +72,29 @@ export default function DashSidebar({ activeTab }) {
   const go = (tab) => `/admin?tab=${tab}`;
 
   async function handleLogout() {
-  try {
-    await dispatch(doSignOut());
-    nav("/", { replace: true });
-  } finally {
-   }
-}
+    try {
+      await dispatch(doSignOut());
+      nav("/", { replace: true });
+    } finally {
+    }
+  }
 
+  // ===== Role-based menu =====
+  // Viewers should only see Profile (and the Sign out button below).
+  const filteredSections = useMemo(() => {
+    if (!isViewer) return SECTIONS;
+
+    const onlyProfile = SECTIONS.map((s) => {
+      const items =
+        s.items?.filter((it) => it.tab === "profile") ?? [];
+      return { ...s, items };
+    }).filter((s) => s.items.length > 0);
+
+    // Hide "Overview" title if it ends up empty; keep a single clean group
+    return onlyProfile.length
+      ? [{ title: "Account", items: onlyProfile.flatMap((s) => s.items) }]
+      : [];
+  }, [isViewer]);
 
   return (
     <aside
@@ -116,7 +129,7 @@ export default function DashSidebar({ activeTab }) {
 
       {/* Scrollable nav */}
       <div className="p-3 space-y-5 overflow-y-auto h-[calc(100vh-58px)] scrollbar-thin scrollbar-thumb-slate-700/70">
-        {SECTIONS.map((section) => (
+        {filteredSections.map((section) => (
           <div key={section.title} className="space-y-2">
             {!collapsed && (
               <div className="px-2 text-[11px] uppercase tracking-wide text-slate-400/80">
@@ -148,7 +161,9 @@ export default function DashSidebar({ activeTab }) {
                       )}
                     />
                     <Icon className="shrink-0" />
-                    {!collapsed && <span className="text-sm font-medium">{it.label}</span>}
+                    {!collapsed && (
+                      <span className="text-sm font-medium">{it.label}</span>
+                    )}
                   </Link>
                 );
               })}
@@ -169,7 +184,9 @@ export default function DashSidebar({ activeTab }) {
           title={collapsed ? "Sign out" : undefined}
         >
           <HiLogout />
-          {!collapsed && <span className="text-sm font-medium">Sign out</span>}
+          {!collapsed && (
+            <span className="text-sm font-medium">Sign out</span>
+          )}
         </button>
       </div>
     </aside>

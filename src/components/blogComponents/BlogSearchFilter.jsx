@@ -1,56 +1,48 @@
-// src/components/BlogSearchFilter.jsx
-import { useState } from "react";
-import { FiSearch } from "react-icons/fi";
+// src/components/blogComponents/BlogSearchFilter.jsx
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import FadeInOnScroll from "../FadeInOnScroll";
 
-const categories = ["All", "Maintenance", "Painting", "Manufacturing"];
+export default function BlogSearchFilter({ initialQ = "", initialTag = "" }) {
+  const [q, setQ] = useState(initialQ);
+  const [tag, setTag] = useState(initialTag);
+  const navigate = useNavigate();
+  const { pathname, search } = useLocation();
 
-export default function BlogSearchFilter({ onSearch = () => {}, onCategoryChange = () => {} }) {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All");
+  useEffect(() => setQ(initialQ), [initialQ]);
+  useEffect(() => setTag(initialTag), [initialTag]);
 
-  const handleSearch = (e) => {
-    const val = e.target.value;
-    setQuery(val);
-    onSearch(val);
-  };
-
-  const handleCategory = (e) => {
-    const val = e.target.value;
-    setCategory(val);
-    onCategoryChange(val);
-  };
+  function submit(e) {
+    e?.preventDefault?.();
+    const params = new URLSearchParams(search);
+    if (q) params.set("q", q); else params.delete("q");
+    if (tag) params.set("tag", tag); else params.delete("tag");
+    params.set("page", "1");
+    navigate(`${pathname}?${params.toString()}`);
+  }
 
   return (
-    <FadeInOnScroll delay={0.1}>
-      <section className="mx-auto max-w-6xl px-4 py-8 grid gap-4 sm:grid-cols-2">
-        {/* Search Input */}
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            value={query}
-            onChange={handleSearch}
-            placeholder="Search posts..."
-            className="w-full rounded-full border border-slate-300 bg-light pl-10 pr-4 py-2 text-sm text-dark dark:bg-slate-800 dark:border-slate-600 dark:text-light focus:border-primary focus:outline-none"
-          />
-        </div>
-
-        {/* Category Dropdown */}
-        <div>
-          <select
-            value={category}
-            onChange={handleCategory}
-            className="w-full rounded-full border border-slate-300 bg-light px-4 py-2 text-sm text-dark dark:bg-slate-800 dark:border-slate-600 dark:text-light focus:border-primary focus:outline-none"
-          >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
-      </section>
+    <FadeInOnScroll>
+      <form onSubmit={submit} className="section-wrapper -mt-8 mb-8 grid gap-3 md:grid-cols-[1fr,240px,auto]">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search posts…"
+          className="rounded-full border border-slate-300 px-4 py-2 bg-light dark:bg-slate-800 text-sm"
+        />
+        <input
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+          placeholder="Filter by tag (e.g. paint, repair)"
+          className="rounded-full border border-slate-300 px-4 py-2 bg-light dark:bg-slate-800 text-sm"
+        />
+        <button
+          type="submit"
+          className="rounded-full bg-accent px-6 py-2 font-medium text-dark hover:bg-primary hover:text-light"
+        >
+          Apply
+        </button>
+      </form>
     </FadeInOnScroll>
   );
 }

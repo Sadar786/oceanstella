@@ -2,8 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 // ⚠️ Make sure this path matches your actual file name/casing:
-import { services } from "../components/data/services";
-import ContactStrip from "../components/ContactStripe";
+ import ContactStrip from "../components/ContactStripe";
 import { motion } from "framer-motion";
 import FadeInOnScroll from "../components/FadeInOnScroll";
 

@@ -24,7 +24,7 @@ import {
 } from "react-icons/ri"; // Remix
 
 import { useDispatch, useSelector } from "react-redux";
-import { toggleTheme } from "../redux/theme/themeSlice.js";
+import { toggleTheme } from "../redux/Theme/ThemeSlice.js";
 import logo2 from "../assets/logo2.png";
 import logo3 from "../assets/logo3.png";
 import PrimaryButton from "./PrimaryButton";

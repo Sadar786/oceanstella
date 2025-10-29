@@ -152,7 +152,7 @@ export default function DashboardHome() {
                   return (
                     <tr key={p.slug || p._id || p.id} className="bg-slate-900/60">
                       <Td>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 some thing esle">
                           {img ? (
                             <img
                               src={img}

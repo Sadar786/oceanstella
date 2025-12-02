@@ -5,6 +5,7 @@ import { useParams, Link } from "react-router-dom";
  import ContactStrip from "../components/ContactStripe";
 import { motion } from "framer-motion";
 import FadeInOnScroll from "../components/FadeInOnScroll";
+import {services} from "../components/data/Services";
 
 /* ======================= Config & Helpers ======================= */
 const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/+$/, "") || "";

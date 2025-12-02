@@ -1,17 +1,17 @@
 // src/components/data/Services.js
 
 import boatMakingHero      from "../../assets/boatMaking.webp";
-import boatMaking2         from "../../assets/NewBoat1.jpg";
+import boatMaking2         from "../../assets/newBoat1.jpg";
 import boatMaking3         from "../../assets/boatMaking3.jpg";
 import boatMaking4         from "../../assets/boatMaking4.jpg";
 
 import boatPaintingHero    from "../../assets/boatPainting.webp";
-import boatPainting2       from "../../assets/NewBoat5.jpg";
+import boatPainting2       from "../../assets/newBoat5.jpg";
 import boatPainting3       from "../../assets/boatPainting1.jpg";
 import boatPainting4       from "../../assets/boatPainting3.jpg";
 
 import maintenanceHero     from "../../assets/boatCus.webp";      // reuse demo asset
-import maintenance2        from "../../assets/NewBoat7.jpg";
+import maintenance2        from "../../assets/newBoat7.jpg";
 import maintenance3        from "../../assets/boatCus2.jpg";
 import maintenance4        from "../../assets/boatCus3.jpg";
 

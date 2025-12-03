@@ -93,9 +93,7 @@ export default function Navbar() {
       {/* Top info bar */}
       <div className="bg-dark text-light text-xs py-1 px-4">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
-          <a href="tel:+923322649000" className="hover:text-accent transition">
-            +92 33 226 49000
-          </a>
+        
           <div className="flex items-center gap-3">
             <a
               href="#"
@@ -121,6 +119,9 @@ export default function Navbar() {
               <RiWhatsappFill />
             </a>
           </div>
+            <a href="tel:+923322649000" className="hover:text-accent transition">
+            +92 33 226 49000
+          </a>
         </div>
       </div>
 

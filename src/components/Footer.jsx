@@ -17,7 +17,7 @@ const links = {
     { to: "/contact", label: "Contact" },
   ],
   services: [
-    { to: "/products?type=build", label: "Boat Making" },
+    { to: "/products?type=build", label: "Boat Building" },
     { to: "/products?type=paint", label: "Boat Painting" },
     { to: "/products?type=maintenance", label: "Maintenance" },
     { to: "/products?type=custom", label: "Custom Builds" },

@@ -47,9 +47,8 @@ const services = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false); // mobile submenu
-  const [authOpen, setAuthOpen] = useState(false); // auth open or not 
-  const [scrolled, setScrolled] = useState(false);  // scrolled or not 
-  
+  const [authOpen, setAuthOpen] = useState(false); // auth open or not
+  const [scrolled, setScrolled] = useState(false); // scrolled or not
 
   // with HashRouter, pathname is '/route' (the hash is handled internally)
   const { pathname } = useLocation();
@@ -152,28 +151,45 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.href}
+          <Link
+            to="/"
+            className={[
+              "relative group px-1 text-sm font-medium transition-colors",
+              isActive("/home")
+                ? "text-primary"
+                : "text-dark dark:text-light hover:text-primary",
+            ].join(" ")}
+          >
+            {"Home"}
+            {/* underline animation */}
+            <span
               className={[
-                "relative group px-1 text-sm font-medium transition-colors",
-                isActive(link.href)
-                  ? "text-primary"
-                  : "text-dark dark:text-light hover:text-primary",
+                "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary",
+                "transition-all duration-300",
+                isActive("/home") ? "w-full" : "group-hover:w-full",
               ].join(" ")}
-            >
-              {link.name}
-              {/* underline animation */}
-              <span
-                className={[
-                  "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary",
-                  "transition-all duration-300",
-                  isActive(link.href) ? "w-full" : "group-hover:w-full",
-                ].join(" ")}
-              />
-            </Link>
-          ))}
+            />
+          </Link>
+
+ <Link
+            to="/products"
+            className={[
+              "relative group px-1 text-sm font-medium transition-colors",
+              isActive("/products")
+                ? "text-primary"
+                : "text-dark dark:text-light hover:text-primary",
+            ].join(" ")}
+          >
+            {"Products"}
+            {/* underline animation */}
+            <span
+              className={[
+                "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary",
+                "transition-all duration-300",
+                isActive("/products") ? "w-full" : "group-hover:w-full",
+              ].join(" ")}
+            />
+          </Link>
 
           {/* Services mega-dropdown */}
           <div className="relative group/dropdown">
@@ -272,8 +288,49 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Case Studies & Blog */}
+         
           <Link
+            to="/about"
+            className={[
+              "relative group px-1 text-sm font-medium transition-colors",
+              isActive("/about")
+                ? "text-primary"
+                : "text-dark dark:text-light hover:text-primary",
+            ].join(" ")}
+          >
+            {"About"}
+            {/* underline animation */}
+            <span
+              className={[
+                "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary",
+                "transition-all duration-300",
+                isActive("/about") ? "w-full" : "group-hover:w-full",
+              ].join(" ")}
+            />
+          </Link>
+          <Link
+            to="/contact"
+            className={[
+              "relative group px-1 text-sm font-medium transition-colors",
+              isActive("/contact")
+                ? "text-primary"
+                : "text-dark dark:text-light hover:text-primary",
+            ].join(" ")}
+          >
+            {"Contact"}
+            {/* underline animation */}
+            <span
+              className={[
+                "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-0 bg-primary",
+                "transition-all duration-300",
+                isActive("/contact") ? "w-full" : "group-hover:w-full",
+              ].join(" ")}
+            />
+          </Link>
+
+          {/* Case Studies & Blog */}
+          {/*from requirements, these are to be hidden for now*/}
+          {/* <Link
             to="/case-studies"
             className={[
               "relative group px-1 text-sm font-medium transition-colors",
@@ -289,8 +346,9 @@ export default function Navbar() {
                 isActive("/case-studies") ? "w-full" : "group-hover:w-full",
               ].join(" ")}
             />
-          </Link>
+          </Link> */}
 
+          {/* from requirements, these are to be hidden for now
           <Link
             to="/blog"
             className={[
@@ -307,7 +365,7 @@ export default function Navbar() {
                 isActive("/blog") ? "w-full" : "group-hover:w-full",
               ].join(" ")}
             />
-          </Link>
+          </Link> */}
 
           {/* Theme toggle */}
           <button
@@ -374,7 +432,6 @@ export default function Navbar() {
                     >
                       <FiGrid className="text-base" />
                       Dashboard
-
                     </Link>
                     <Link
                       to="/profile"
@@ -495,7 +552,8 @@ export default function Navbar() {
             )}
           </div>
 
-          <Link
+{/* Case Studies & Blog should be hidden for now */}
+          {/* <Link
             to="/case-studies"
             onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
@@ -508,7 +566,7 @@ export default function Navbar() {
             className="block px-3 py-2 text-sm text-dark dark:text-light hover:bg-light dark:hover:bg-slate-800 rounded-lg transition"
           >
             Blogs
-          </Link>
+          </Link> */}
 
           {/* Theme toggle */}
           <button

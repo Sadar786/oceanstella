@@ -10,17 +10,33 @@ export default function OAuthGoogle() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  async function handleGoogle() {
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
+async function handleGoogle() {
+  console.log("Google clicked");
 
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  try {
     const cred = await signInWithPopup(auth, provider);
+    console.log("Firebase cred:", cred);
+
     const idToken = await cred.user.getIdToken();
+    console.log("ID Token:", idToken.substring(0, 20));
 
     const signedUp = await dispatch(doGoogleSignIn(idToken));
-     if (signedUp) navigate("/");
+    console.log("SignedUp thunk result:", signedUp);
+
+    if (signedUp) {
+      console.log("Navigating to /");
+      navigate("/");
+    } else {
+      console.log("signedUp was FALSE");
+    }
+  } catch (err) {
+    console.error("Google login error:", err);
   }
+}
+
 
   return (
     <button

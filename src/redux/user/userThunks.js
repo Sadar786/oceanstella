@@ -5,23 +5,24 @@ import {
   signOutStart, signOutSuccess,
 } from "./userSlice";
 
-// 1) Load current session from cookie
+/* -----------------------------------------------------------
+   1) Load user session (cookie-based)
+----------------------------------------------------------- */
 export const initMe = () => async (dispatch) => {
   dispatch(signInStart());
   try {
     const r = await api("/api/v1/auth/me", { method: "GET" });
     dispatch(signInSuccess(r.user));
-    return r.user;
+    return true;
   } catch (_) {
-    // Not signed in is not an error state for UI; mark as guest/clean.
-    // If you don't have signOutSuccess, you can dispatch signInFailure(null) as you did,
-    // but that might show error banners. Prefer a neutral action:
     dispatch(signOutSuccess());
-    return null;
+    return false;
   }
 };
 
-// 2) Credentials login
+/* -----------------------------------------------------------
+   2) Email + Password Sign-In
+----------------------------------------------------------- */
 export const doSignIn = (email, password) => async (dispatch) => {
   dispatch(signInStart());
   try {
@@ -29,17 +30,18 @@ export const doSignIn = (email, password) => async (dispatch) => {
       method: "POST",
       body: { email, password },
     });
-    // Optional debug BEFORE return
-    // console.log("Signed in:", r.user);
+
     dispatch(signInSuccess(r.user));
-    return r.user;
+    return true;   // IMPORTANT
   } catch (e) {
     dispatch(signInFailure(e.message || "Sign in failed"));
-    throw e;
+    return false;
   }
 };
 
-// 3) Email/password signup
+/* -----------------------------------------------------------
+   3) Email + Password Sign-Up
+----------------------------------------------------------- */
 export const doSignUp = (name, email, password) => async (dispatch) => {
   dispatch(signInStart());
   try {
@@ -47,41 +49,47 @@ export const doSignUp = (name, email, password) => async (dispatch) => {
       method: "POST",
       body: { name, email, password },
     });
+
     dispatch(signInSuccess(r.user));
-    return r.user;
+    return true;   // IMPORTANT
   } catch (e) {
     dispatch(signInFailure(e.message || "Sign up failed"));
-    throw e;
+    return false;
   }
 };
 
-// 4) Google OAuth (Firebase ID token → backend verify)
+/* -----------------------------------------------------------
+   4) Google OAuth Login
+----------------------------------------------------------- */
 export const doGoogleSignIn = (idToken) => async (dispatch) => {
   dispatch(signInStart());
-   try {
+  try {
     const r = await api("/api/v1/auth/google", {
       method: "POST",
       body: { idToken },
     });
+
     dispatch(signInSuccess(r.user));
-     return r.user;
+    return true;   // THIS FIXES NAVIGATION
   } catch (e) {
     dispatch(signInFailure(e.message || "Google sign-in failed"));
-    throw e;
+    return false;
   }
 };
 
-// 5) Logout
+/* -----------------------------------------------------------
+   5) Logout
+----------------------------------------------------------- */
 export const doSignOut = () => async (dispatch) => {
   try {
-    // If you don't have signOutStart exported, you can fall back to signInStart
     dispatch(signOutStart?.() || signInStart());
+
     await api(`/api/v1/auth/signout`, { method: "POST" });
+
     dispatch(signOutSuccess());
-    // If you're using redux-persist, consider purging here (outside this file).
+    return true;
   } catch (err) {
-    // Optionally swallow, or surface
     dispatch(signInFailure(err.message || "Logout failed"));
-    throw err;
+    return false;
   }
 };

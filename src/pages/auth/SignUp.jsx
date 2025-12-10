@@ -19,7 +19,7 @@ export default function SignUp() {
     setErr("");
     try {
       await dispatch(doSignUp(name, email, password));
-      nav("/admin?tab=dashboard", { replace: true });
+      nav("/profile", { replace: true });
     } catch (e) {
       setErr(String(e.message || e));
     }

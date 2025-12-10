@@ -135,7 +135,7 @@ export default function Contact() {
                 Email
               </a>
               <a
-                href={`https://wa.me/+971551234567?text=${encodeURIComponent(
+                href={`https://wa.me/+92332269000?text=${encodeURIComponent(
                   "Hi Ocean Stella — I have a question about your services."
                 )}`}
                 target="_blank"

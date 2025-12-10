@@ -135,7 +135,7 @@ export default function Contact() {
                 Email
               </a>
               <a
-                href={`https://wa.me/+92332269000?text=${encodeURIComponent(
+                href={`https://wa.me/+923322649000?text=${encodeURIComponent(
                   "Hi Ocean Stella — I have a question about your services."
                 )}`}
                 target="_blank"
@@ -392,7 +392,7 @@ export default function Contact() {
                   {submitting ? "Sending…" : "Send Message"}
                 </button>
                 <a
-                  href={`https://wa.me/+971551234567?text=${encodeURIComponent(
+                  href={`https://wa.me/+923322649000?text=${encodeURIComponent(
                     `Hi Ocean Stella — My name is ${form.name || "(your name)"}. ` +
                       `I’m inquiring about ${form.subject || form.service}.`
                   )}`}

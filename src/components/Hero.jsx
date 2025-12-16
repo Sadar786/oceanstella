@@ -54,7 +54,11 @@ export default function Hero() {
         <div className="hidden sm:block">
           <div
             className="mx-auto max-w-4xl rounded-3xl  bg-transparent
-                shadow-[0_10px_40px_rgba(0,0,0,0.35)] p-8 md:p-10 text-center"
+                 p-8 md:p-10 text-center"
+
+                 // glass effect removed for better video visibility
+                 // shadow-[0_10px_40px_rgba(0,0,0,0.35)]
+                
           >
             <span className="inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-[11px] font-semibold text-white ring-1 ring-white/20">
               Ocean Stella • Since 1998

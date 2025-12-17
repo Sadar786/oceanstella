@@ -18,13 +18,15 @@ export default function VerifyEmail() {
     e.preventDefault();
     setErr(""); setMsg(""); setLoading(true);
     try {
-      const r = await fetch("/api/v1/auth/verify-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code }),
-      });
+     const r = await fetch("/api/v1/auth/verify-email", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify({ email, code }),
+});
+
       const data = await r.json();
-      if (!r.ok) throw new Error(data.message || "Verification failed");
+      if (!r.ok) throw new Error(data.error || "Verification failed");
       setMsg("Email verified ✅");
       nav("/profile", { replace: true });
     } catch (e) {

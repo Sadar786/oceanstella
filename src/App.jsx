@@ -1,5 +1,5 @@
 // App.jsx
-import { BrowserRouter, Routes, Route } from "react-router-dom"; 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/mainLayout";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -56,7 +56,6 @@ export default function App() {
           <Route path="/auth/login" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
           <Route path="/auth/verify-email" element={<VerifyEmail />} />
-
         </Routes>
       </MainLayout>
     </BrowserRouter>

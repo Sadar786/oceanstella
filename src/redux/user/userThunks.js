@@ -50,16 +50,16 @@ export const doSignUp = (name, email, password) => async (dispatch) => {
       body: { name, email, password },
     });
 
-    // ✅ IMPORTANT: signup no longer logs in
-    // so DO NOT signInSuccess here
-    dispatch(signInFailure(null)); // optional: clear error state if you use it
+    // signup does NOT log in anymore, so don't signInSuccess here
+    dispatch(signInFailure(null)); // optional: clear error
 
-    return r; // ✅ return the server response (needsVerification, email)
+    return r; // ✅ IMPORTANT: return { needsVerification, email }
   } catch (e) {
     dispatch(signInFailure(e.message || "Sign up failed"));
-    throw e; // ✅ so submit() catch works
+    throw e;
   }
 };
+
 
 
 /* -----------------------------------------------------------

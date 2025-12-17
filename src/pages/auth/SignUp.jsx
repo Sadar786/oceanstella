@@ -14,16 +14,28 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
 
-  async function submit(e) {
-    e.preventDefault();
-    setErr("");
-    try {
-      await dispatch(doSignUp(name, email, password));
-      nav("/profile", { replace: true });
-    } catch (e) {
-      setErr(String(e.message || e));
+async function submit(e) {
+  e.preventDefault();
+  setErr("");
+  try {
+    const action = await dispatch(doSignUp(name, email, password));
+
+    // works whether your thunk returns payload or action object
+    const payload = action?.payload ?? action;
+
+    if (payload?.needsVerification) {
+      nav(`/auth/verify-email?email=${encodeURIComponent(payload.email || email)}`, {
+        replace: true,
+      });
+      return;
     }
+
+    // fallback (if you ever allow signup auto-login)
+    nav("/profile", { replace: true });
+  } catch (e) {
+    setErr(String(e.message || e));
   }
+}
 
   return (
     <div className="min-h-screen grid place-items-center bg-slate-950 text-slate-100 p-4">

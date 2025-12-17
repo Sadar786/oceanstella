@@ -35,6 +35,7 @@ export default function App() {
           <Route path="/models/:slug" element={<ModelDetail />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
+          <Route path="/auth/verify-email" element={<VerifyEmail />} />
 
           <Route
             path="/profile"
@@ -56,7 +57,6 @@ export default function App() {
           <Route path="/auth/login" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
         </Routes>
-          <Route path="/auth/verify-email" element={<VerifyEmail />} />
       </MainLayout>
     </BrowserRouter>
   );

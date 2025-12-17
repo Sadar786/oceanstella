@@ -18,10 +18,7 @@ async function submit(e) {
   e.preventDefault();
   setErr("");
   try {
-    const action = await dispatch(doSignUp(name, email, password));
-
-    // works whether your thunk returns payload or action object
-    const payload = action?.payload ?? action;
+    const payload = await dispatch(doSignUp(name, email, password));
 
     if (payload?.needsVerification) {
       nav(`/auth/verify-email?email=${encodeURIComponent(payload.email || email)}`, {
@@ -30,7 +27,7 @@ async function submit(e) {
       return;
     }
 
-    // fallback (if you ever allow signup auto-login)
+    // only if your backend ever signs in during signup (not now)
     nav("/profile", { replace: true });
   } catch (e) {
     setErr(String(e.message || e));

@@ -50,13 +50,17 @@ export const doSignUp = (name, email, password) => async (dispatch) => {
       body: { name, email, password },
     });
 
-    dispatch(signInSuccess(r.user));
-    return true;   // IMPORTANT
+    // ✅ IMPORTANT: signup no longer logs in
+    // so DO NOT signInSuccess here
+    dispatch(signInFailure(null)); // optional: clear error state if you use it
+
+    return r; // ✅ return the server response (needsVerification, email)
   } catch (e) {
     dispatch(signInFailure(e.message || "Sign up failed"));
-    return false;
+    throw e; // ✅ so submit() catch works
   }
 };
+
 
 /* -----------------------------------------------------------
    4) Google OAuth Login

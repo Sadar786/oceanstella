@@ -21,11 +21,13 @@ async function submit(e) {
     const payload = await dispatch(doSignUp(name, email, password));
 
     if (payload?.needsVerification) {
+      console.log("signup done now navigate to verify-email");
       nav(`/auth/verify-email?email=${encodeURIComponent(payload.email || email)}`, {
         replace: true,
       });
       return;
     }
+    console.log("did not verified");
 
     // only if your backend ever signs in during signup (not now)
     nav("/profile", { replace: true });

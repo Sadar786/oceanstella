@@ -55,8 +55,8 @@ export default function App() {
 
           <Route path="/auth/login" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
-          <Route path="/auth/verify-email" element={<VerifyEmail />} />
         </Routes>
+          <Route path="/auth/verify-email" element={<VerifyEmail />} />
       </MainLayout>
     </BrowserRouter>
   );

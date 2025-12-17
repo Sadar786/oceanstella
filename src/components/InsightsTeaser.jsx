@@ -1,7 +1,6 @@
 // src/components/InsightsTeaser.jsx
 import { Link } from "react-router-dom";
-import FadeInOnScroll from "./FadeInOnScroll";
-import useQuery from "../hooks/useQuery";
+ import useQuery from "../hooks/useQuery";
 import { apiMaybe, qs } from "../lib/api";
 import Skeleton from "../ui/Skeleton"; // ← fixed path
 
@@ -53,8 +52,7 @@ export default function InsightsTeaser() {
   const posts = data || DEMO;
 
   return (
-    <FadeInOnScroll delay={0.4}>
-      <section className="section-wrapper">
+       <section className="section-wrapper2">
         <h2 className="mb-6 text-center text-3xl font-bold text-dark dark:text-light">
           Latest Insights
         </h2>
@@ -118,6 +116,5 @@ export default function InsightsTeaser() {
           </p>
         )}
       </section>
-    </FadeInOnScroll>
-  );
+   );
 }

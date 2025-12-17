@@ -55,7 +55,7 @@ export default function Home() {
       </FadeInOnScroll>
 
       {/* Product gallery */}
-      <FadeInOnScroll delay={0.2}>
+      <FadeInOnScroll delay={0.1}>
         <section className="section-wrapper dark:text-light">
           <ProductsGallery />
         </section>

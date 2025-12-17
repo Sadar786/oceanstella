@@ -1,7 +1,6 @@
 // src/components/productcomponents/ModelFilter.jsx
 import { FiSearch } from "react-icons/fi";
-import FadeInOnScroll from "../FadeInOnScroll";
-
+ 
 
 export default function ModelFilter({
   categories,
@@ -11,8 +10,7 @@ export default function ModelFilter({
   setQuery,
 }) {
   return (
-    <FadeInOnScroll delay={0.2}>
-      <section className="section-wrapper">
+       <section className="section-wrapper2 mb-12">
         {/* Search input */}
         <div className="mb-6 max-w-md mx-auto relative">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -42,6 +40,5 @@ export default function ModelFilter({
           ))}
         </div>
       </section>
-    </FadeInOnScroll>
-  );
+   );
 }

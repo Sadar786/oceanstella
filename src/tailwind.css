@@ -10,3 +10,6 @@
 .section-wrapper {
   @apply mx-auto max-w-6xl px-4 py-16;
 }
+.section-wrapper2 {
+  @apply mx-auto max-w-6xl px-4 ;
+}

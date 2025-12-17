@@ -15,13 +15,15 @@ export default function ProductsGallery() {
 
   const { data, pending, error } = useQuery(async () => {
     // Adjust the params/fields to your server contract
-    const res = await api(`/api/v1/products${qs({
-      status: "published",
-      limit: 3,
-      sort: "-createdAt",
-      fields: "name,slug,images",
-    })}`);
-    const items = Array.isArray(res) ? res : (res.items || res.data || []);
+    const res = await api(
+      `/api/v1/products${qs({
+        status: "published",
+        limit: 3,
+        sort: "-createdAt",
+        fields: "name,slug,images",
+      })}`
+    );
+    const items = Array.isArray(res) ? res : res.items || res.data || [];
     return items.length ? items : FALLBACK;
   }, []);
 
@@ -30,11 +32,15 @@ export default function ProductsGallery() {
   return (
     <section className="border border-slate-200 bg-white py-16 transition-colors duration-300 dark:border-slate-600 dark:bg-slate-800">
       <div className="mx-auto max-w-6xl px-4">
-        <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light">Featured Models</h2>
+        <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light">
+          Featured Models
+        </h2>
 
         {pending ? (
           <div className="grid gap-6 md:grid-cols-3">
-            {[0,1,2].map(i => <Skeleton key={i} className="aspect-video rounded-xl" />)}
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} className="aspect-video rounded-xl" />
+            ))}
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
@@ -64,7 +70,11 @@ export default function ProductsGallery() {
           </div>
         )}
 
-        {error && <p className="mt-4 text-center text-sm text-rose-600">Couldn’t load products — showing demo.</p>}
+        {error && (
+          <p className="mt-4 text-center text-sm text-rose-600">
+            Couldn’t load products — showing demo.
+          </p>
+        )}
       </div>
     </section>
   );

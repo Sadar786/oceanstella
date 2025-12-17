@@ -1,6 +1,5 @@
 // src/components/FeaturedCaseStudies.jsx
-import FadeInOnScroll from "./FadeInOnScroll";
-import { Link } from "react-router-dom";
+ import { Link } from "react-router-dom";
 import useQuery from "../hooks/useQuery";
 import { apiMaybe } from "../lib/api";
 import Skeleton from "../ui/Skeleton";
@@ -24,9 +23,8 @@ export default function FeaturedCaseStudies() {
   const cards = data || [];
 
   return (
-    <FadeInOnScroll delay={0.3}>
-      <section className="section-wrapper">
-        <h2 className="mb-6 text-center text-3xl font-bold text-dark dark:text-light">
+       <section className="section-wrapper">
+        <h2 className="mb-8 text-center text-3xl font-bold text-dark dark:text-light">
           Featured Builds & Projects
         </h2>
 
@@ -83,6 +81,5 @@ export default function FeaturedCaseStudies() {
           </Link>
         </div>
       </section>
-    </FadeInOnScroll>
-  );
+   );
 }

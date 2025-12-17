@@ -5,40 +5,43 @@ import { app } from "../../firebase";
 import { useDispatch } from "react-redux";
 import { doGoogleSignIn } from "../../redux/user/userThunks";
 import { useNavigate } from "react-router-dom";
+import {Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 export default function OAuthGoogle() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const currentUser = useSelector((s) => s.user.currentUser); // adjust name
+
+
+   useEffect(() => {
+    if (currentUser) {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser, navigate]);
+
+ 
 
 async function handleGoogle() {
-  console.log("Google clicked");
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+    try {
+      const cred = await signInWithPopup(auth, provider);
+      const idToken = await cred.user.getIdToken();
 
-  try {
-    const cred = await signInWithPopup(auth, provider);
-    console.log("Firebase cred:", cred);
-
-    const idToken = await cred.user.getIdToken();
-    console.log("ID Token:", idToken.substring(0, 20));
-
-    const signedUp = await dispatch(doGoogleSignIn(idToken));
-    console.log("SignedUp thunk result:", signedUp);
-
-    if (signedUp) {
-      console.log("Navigating to /");
-      navigate("/");
-    } else {
-      console.log("signedUp was FALSE");
+      // IMPORTANT: unwrap so errors throw and success returns payload
+      await dispatch(doGoogleSignIn(idToken));
+      // no need to navigate here; useEffect will do it once user is set
+    } catch (err) {
+      console.error("Google login error:", err);
     }
-  } catch (err) {
-    console.error("Google login error:", err);
   }
-}
 
 
   return (
+    <>
     <button
       type="button"
       onClick={handleGoogle}
@@ -47,5 +50,10 @@ async function handleGoogle() {
       <AiFillGoogleCircle className="w-5 h-5 text-red-500" />
       Continue with Google
     </button>
+
+   
+    </>
+
+    
   );
 }

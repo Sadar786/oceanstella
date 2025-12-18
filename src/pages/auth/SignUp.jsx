@@ -17,22 +17,24 @@ export default function SignUp() {
 async function submit(e) {
   e.preventDefault();
   setErr("");
+
   try {
     const payload = await dispatch(doSignUp(name, email, password));
 
     if (payload?.needsVerification) {
-      console.log("signup done now navigate to verify-email");
-      nav(`/auth/verify-email?email=${encodeURIComponent(payload.email || email)}`, {
-        replace: true,
-      });
+      const targetEmail = payload.email || email;
+
+      nav(
+        `/auth/verify-email?email=${encodeURIComponent(targetEmail)}`,
+        { replace: true }
+      );
       return;
     }
-    console.log("did not verified");
 
-    // only if your backend ever signs in during signup (not now)
+    // if backend ever logs in during signup (not in your case)
     nav("/profile", { replace: true });
   } catch (e) {
-    setErr(String(e.message || e));
+    setErr(String(e?.message || e));
   }
 }
 

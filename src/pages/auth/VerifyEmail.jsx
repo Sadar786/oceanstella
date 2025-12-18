@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
+const API_BASE = import.meta.env.VITE_API_URL || ""; // "" works if you proxy in dev
 
 export default function VerifyEmail() {
   const nav = useNavigate();
   const loc = useLocation();
 
-  const params = new URLSearchParams(loc.search);
-  const presetEmail = params.get("email") || "";
+  // ✅ Safe query reading + decoding
+  const presetEmail = useMemo(() => {
+    const params = new URLSearchParams(loc.search);
+    const raw = params.get("email") || "";
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return raw;
+    }
+  }, [loc.search]);
 
   const [email, setEmail] = useState(presetEmail);
   const [code, setCode] = useState("");
@@ -14,41 +24,57 @@ export default function VerifyEmail() {
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ If user opens another link with different ?email=..., update the field
+  useEffect(() => {
+    if (presetEmail && presetEmail !== email) setEmail(presetEmail);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presetEmail]);
+
   async function verify(e) {
     e.preventDefault();
-    setErr(""); setMsg(""); setLoading(true);
-    try {
-     const r = await fetch("/api/v1/auth/verify-email", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  credentials: "include",
-  body: JSON.stringify({ email, code }),
-});
+    setErr("");
+    setMsg("");
+    setLoading(true);
 
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "Verification failed");
+    try {
+      const r = await fetch(`${API_BASE}/api/v1/auth/verify-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, code }),
+      });
+
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || data.message || "Verification failed");
+
       setMsg("Email verified ✅");
       nav("/profile", { replace: true });
     } catch (e) {
-      setErr(String(e.message || e));
+      setErr(String(e?.message || e));
     } finally {
       setLoading(false);
     }
   }
 
   async function resend() {
-    setErr(""); setMsg(""); setLoading(true);
+    setErr("");
+    setMsg("");
+    setLoading(true);
+
     try {
-      const r = await fetch("/api/v1/auth/resend-email-otp", {
+      const r = await fetch(`${API_BASE}/api/v1/auth/resend-email-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email }),
       });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.message || "Resend failed");
+
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || data.message || "Resend failed");
+
       setMsg("New code sent.");
     } catch (e) {
-      setErr(String(e.message || e));
+      setErr(String(e?.message || e));
     } finally {
       setLoading(false);
     }
@@ -60,8 +86,16 @@ export default function VerifyEmail() {
         <h1 className="text-xl font-semibold">Verify your email</h1>
         <p className="text-slate-400 text-sm">Enter the 6-digit code we sent.</p>
 
-        {err && <div className="mt-3 rounded-lg border border-red-400/40 bg-red-500/10 text-red-300 px-3 py-2 text-sm">{err}</div>}
-        {msg && <div className="mt-3 rounded-lg border border-emerald-400/40 bg-emerald-500/10 text-emerald-200 px-3 py-2 text-sm">{msg}</div>}
+        {err && (
+          <div className="mt-3 rounded-lg border border-red-400/40 bg-red-500/10 text-red-300 px-3 py-2 text-sm">
+            {err}
+          </div>
+        )}
+        {msg && (
+          <div className="mt-3 rounded-lg border border-emerald-400/40 bg-emerald-500/10 text-emerald-200 px-3 py-2 text-sm">
+            {msg}
+          </div>
+        )}
 
         <form onSubmit={verify} className="mt-4 space-y-4">
           <div>

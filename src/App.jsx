@@ -1,6 +1,9 @@
-// App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
+
+import ScrollToTop from "./components/ScrollToTop";
+import RequireAuth from "./components/RequireAuth";
+
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import About from "./pages/About";
@@ -11,13 +14,13 @@ import BlogDetail from "./pages/BlogDetail";
 import CaseStudies from "./pages/CaseStudies";
 import CaseStudyDetail from "./pages/CaseStudyDetail";
 import ModelDetail from "./pages/ModelDetail";
+
 import Profile from "./pages/Profile";
 import Dashboard from "./admin/Dashboard";
+
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import VerifyEmail from "./pages/auth/VerifyEmail";
-import RequireAuth from "./components/RequireAuth";
-import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   return (
@@ -27,6 +30,7 @@ export default function App() {
       <Routes>
         {/* ✅ Layout wrapper */}
         <Route element={<MainLayout />}>
+          {/* public */}
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/about" element={<About />} />
@@ -38,12 +42,12 @@ export default function App() {
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
 
-          {/* ✅ auth */}
+          {/* auth */}
           <Route path="/auth/login" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
           <Route path="/auth/verify-email" element={<VerifyEmail />} />
 
-          {/* ✅ protected */}
+          {/* protected */}
           <Route
             path="/profile"
             element={

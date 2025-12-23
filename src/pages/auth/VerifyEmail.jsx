@@ -48,9 +48,9 @@ export default function VerifyEmail() {
       if (!r.ok) throw new Error(data.error || data.message || "Verification failed");
 
       setMsg("Email verified ✅");
-      
+
       setTimeout(() => {
-        nav("/profile", { replace: true });
+        nav("/admin?tab=profile", { replace: true });
       }, 1500);
 
     } catch (e) {

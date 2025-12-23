@@ -33,8 +33,7 @@ async function submit(e) {
     }
 
     // if backend ever logs in during signup (not in your case)
-    nav("/profile", { replace: true });
-  } catch (e) {
+   } catch (e) {
     setErr(String(e?.message || e));
   }
 }

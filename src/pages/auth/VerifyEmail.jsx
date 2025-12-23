@@ -49,8 +49,7 @@ export default function VerifyEmail() {
 
       setMsg("Email verified ✅");
 
-        nav("/", { replace: true });
-
+ 
     } catch (e) {
       setErr(String(e?.message || e));
     } finally {

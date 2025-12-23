@@ -48,7 +48,11 @@ export default function VerifyEmail() {
       if (!r.ok) throw new Error(data.error || data.message || "Verification failed");
 
       setMsg("Email verified ✅");
-      nav("/profile", { replace: true });
+      
+      setTimeout(() => {
+        nav("/profile", { replace: true });
+      }, 1500);
+
     } catch (e) {
       setErr(String(e?.message || e));
     } finally {
@@ -83,7 +87,9 @@ export default function VerifyEmail() {
   return (
     <div className="min-h-screen grid place-items-center bg-slate-950 text-slate-100 p-4">
       <div className="w-full max-w-md rounded-2xl bg-slate-900/60 border border-white/10 p-6 shadow-lg backdrop-blur">
+      
         <h1 className="text-xl font-semibold">Verify your email</h1>
+
         <p className="text-slate-400 text-sm">Enter the 6-digit code we sent.</p>
 
         {err && (

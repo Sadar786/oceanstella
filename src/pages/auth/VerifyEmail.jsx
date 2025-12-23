@@ -49,9 +49,7 @@ export default function VerifyEmail() {
 
       setMsg("Email verified ✅");
 
-      setTimeout(() => {
-        nav("/admin?tab=profile", { replace: true });
-      }, 1500);
+        nav("/", { replace: true });
 
     } catch (e) {
       setErr(String(e?.message || e));

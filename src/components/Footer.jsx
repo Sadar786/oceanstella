@@ -215,7 +215,7 @@ export default function Footer() {
   <span className="text-red-400 animate-pulse">❤</span>
   by{" "}
   <a
-    href="https://wa.me/923322649000?text=Hi%20Sadar,%20I%20found%20your%20work%20through%20your%20website."
+    href="https://wa.me/923322649000?text=Hi%20Sadar,%20I%20found%20your%20work%20through%20OceanStella%20website%20you%20developed."
     target="_blank"
     rel="noopener noreferrer"
     className="relative group font-semibold bg-gradient-to-r from-accent to-sky-400 bg-clip-text text-transparent hover:underline hover:underline-offset-4 transition"

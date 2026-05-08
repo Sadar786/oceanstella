@@ -1,2 +1,36 @@
+# dependencies
 node_modules/
+
+# env files
 .env
+.env.local
+.env.production
+
+# build folders
+dist/
+build/
+.next/
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# coverage
+coverage/
+
+# uploads/temp
+uploads/
+tmp/
+temp/
+
+# cache
+.cache/
